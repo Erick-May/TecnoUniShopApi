@@ -34,11 +34,20 @@ namespace TecnoUniShopApi.Data
             modelBuilder.Entity<Producto>(entity =>
             {
                 entity.ToTable("Productos_ts");
+
                 entity.HasKey(e => e.IdProducto);
                 entity.Property(e => e.IdProducto).HasColumnName("id_producto");
+
                 entity.Property(e => e.NombreProducto).HasColumnName("nombre_producto");
                 entity.Property(e => e.ImagenProducto).HasColumnName("imagen_producto");
 
+                entity.Property(e => e.Descripcion).HasColumnName("descripcion");
+                entity.Property(e => e.Precio).HasColumnName("precio");
+                entity.Property(e => e.Cantidad).HasColumnName("cantidad");
+                entity.Property(e => e.Estado).HasColumnName("estado");
+
+
+                // Mapeo de la Llave Foranea
                 entity.HasOne(p => p.Categoria)
                       .WithMany()
                       .HasForeignKey(p => p.IdCategoria)

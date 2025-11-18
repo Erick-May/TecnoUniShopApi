@@ -4,8 +4,8 @@ using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
 using TecnoUniShopApi.Data;
 using TecnoUniShopApi.DTOs;
-using TecnoUniShopApi.Models; // ¡Asegurate de tener este!
-using System; // ¡¡Y este, para el DateTime.Now!!
+using TecnoUniShopApi.Models;
+using System;
 
 namespace TecnoUniShopApi.Controllers
 {
@@ -36,11 +36,8 @@ namespace TecnoUniShopApi.Controllers
             return new ApplicationDbContext(optionsBuilder.Options);
         }
 
-        // --- ¡¡NUEVO HELPER!! ---
-        // Para obtener el ID del Admin/Inventarista desde el Token
         private int GetEmpleadoId()
         {
-            // Leemos el claim "sub" (Subject) que guardamos en el Login
             var idClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
             if (idClaim == null)
             {
@@ -54,7 +51,6 @@ namespace TecnoUniShopApi.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<ProductoReadDto>>> GetProductos()
         {
-            // ... (Este metodo se queda igual, no necesita cambios)
             using (var context = CrearContextoSegunRol())
             {
                 try
@@ -92,15 +88,11 @@ namespace TecnoUniShopApi.Controllers
         {
             using (var context = CrearContextoSegunRol())
             {
-                // --- ¡¡CAMBIO!! Usamos transaccion por si falla el log ---
                 using (var transaccion = await context.Database.BeginTransactionAsync())
                 {
                     try
                     {
-                        // 1. Obtenemos el ID del empleado que esta haciendo esto
                         var empleadoId = GetEmpleadoId();
-
-                        // 2. Creamos el producto
                         var productoNuevo = new Models.Producto
                         {
                             NombreProducto = productoDto.NombreProducto,
@@ -112,25 +104,22 @@ namespace TecnoUniShopApi.Controllers
                             ImagenProducto = productoDto.ImagenProducto
                         };
                         context.Productos.Add(productoNuevo);
-                        await context.SaveChangesAsync(); // Guardamos para tener el ID
+                        await context.SaveChangesAsync();
 
-                        // 3. --- ¡¡LOGICA NUEVA!! ---
-                        // Creamos el registro en la bitacora
                         var log = new DetalleRegistro
                         {
                             IdAdmin = empleadoId,
-                            IdProducto = productoNuevo.IdProducto, // Usamos el ID nuevo
+                            IdProducto = productoNuevo.IdProducto,
                             FechaRegistro = DateTime.Now
                         };
                         context.DetalleRegistros.Add(log);
 
-                        // 4. Guardamos el log
                         await context.SaveChangesAsync();
-                        await transaccion.CommitAsync(); // Confirmamos todo
+                        await transaccion.CommitAsync();
                     }
                     catch (Exception ex)
                     {
-                        await transaccion.RollbackAsync(); // Deshacemos todo si falla
+                        await transaccion.RollbackAsync();
                         return BadRequest(new
                         {
                             Mensaje = "Error de base de datos: " + ex.Message,
@@ -158,16 +147,16 @@ namespace TecnoUniShopApi.Controllers
                         var productoEnDb = await context.Productos.FindAsync(id);
                         if (productoEnDb == null) { return NotFound(new { Mensaje = "Producto no encontrado." }); }
 
-                        // Actualizamos el producto
+                        // Copiamos TODOS los campos del DTO
                         productoEnDb.NombreProducto = productoDto.NombreProducto;
                         productoEnDb.Descripcion = productoDto.Descripcion;
-                        // ... (resto de campos)
+                        productoEnDb.Precio = productoDto.Precio;
+                        productoEnDb.Cantidad = productoDto.Cantidad;
+                        productoEnDb.IdCategoria = productoDto.IdCategoria;
+                        productoEnDb.ImagenProducto = productoDto.ImagenProducto;
                         productoEnDb.Estado = productoDto.Estado;
 
-                        // --- ¡¡LOGICA NUEVA!! ---
-                        // Creamos el registro en la bitacora
-                        // (Nota: Tu BD solo permite un registro por admin-producto)
-                        // (Vamos a buscar si ya existe y si no, lo creamos)
+                        // (Logica de la bitacora)
                         var logExistente = await context.DetalleRegistros
                             .FirstOrDefaultAsync(l => l.IdAdmin == empleadoId && l.IdProducto == id);
 
@@ -183,12 +172,11 @@ namespace TecnoUniShopApi.Controllers
                         }
                         else
                         {
-                            // Si ya existia, solo actualizamos la fecha
                             logExistente.FechaRegistro = DateTime.Now;
                         }
 
                         await context.SaveChangesAsync();
-                        await transaccion.CommitAsync(); // Confirmamos todo
+                        await transaccion.CommitAsync();
 
                         return Ok(new { Mensaje = "Producto actualizado y registrado." });
                     }
@@ -205,11 +193,13 @@ namespace TecnoUniShopApi.Controllers
             }
         }
 
+        // --- ¡¡AQUI ESTA EL CAMBIO!! ---
         // DELETE: api/Productos/5
         [HttpDelete("{id}")]
         [Authorize(Roles = "Administrador, Inventarista")]
         public async Task<IActionResult> DeleteProducto(int id)
         {
+            // Esta funcion ya no borra, solo marca como "Agotado"
             using (var context = CrearContextoSegunRol())
             {
                 using (var transaccion = await context.Database.BeginTransactionAsync())
@@ -220,20 +210,34 @@ namespace TecnoUniShopApi.Controllers
                         var productoEnDb = await context.Productos.FindAsync(id);
                         if (productoEnDb == null) { return NotFound(new { Mensaje = "Producto no encontrado." }); }
 
-                        // --- ¡¡LOGICA NUEVA!! ---
-                        // Antes de borrar el producto, borramos los logs asociados
-                        // (Porque si no, SQL Server fallara por la FK)
-                        var logs = context.DetalleRegistros.Where(l => l.IdProducto == id);
-                        context.DetalleRegistros.RemoveRange(logs);
+                        // --- ¡¡NUEVA LOGICA!! ---
+                        // No borramos, solo cambiamos el estado.
+                        productoEnDb.Estado = "Agotado";
+                        productoEnDb.Cantidad = 0; // Opcional: poner el stock en 0
 
-                        // (Tambien habria que borrarlo de Productos_carrito, etc...)
-                        // (Por ahora solo borramos el log y el producto)
+                        // --- Logica de la bitacora (igual que en PUT) ---
+                        var logExistente = await context.DetalleRegistros
+                            .FirstOrDefaultAsync(l => l.IdAdmin == empleadoId && l.IdProducto == id);
 
-                        context.Productos.Remove(productoEnDb);
+                        if (logExistente == null)
+                        {
+                            var log = new DetalleRegistro
+                            {
+                                IdAdmin = empleadoId,
+                                IdProducto = id,
+                                FechaRegistro = DateTime.Now
+                            };
+                            context.DetalleRegistros.Add(log);
+                        }
+                        else
+                        {
+                            logExistente.FechaRegistro = DateTime.Now; // Actualiza la fecha del log
+                        }
+
                         await context.SaveChangesAsync();
                         await transaccion.CommitAsync();
 
-                        return Ok(new { Mensaje = "Producto eliminado." });
+                        return Ok(new { Mensaje = "Producto marcado como Agotado." });
                     }
                     catch (Exception ex)
                     {
@@ -248,4 +252,4 @@ namespace TecnoUniShopApi.Controllers
             }
         }
     }
-} //hola
+}

@@ -99,7 +99,6 @@ namespace TecnoUniShopApi.Controllers
                 }
                 catch (Exception ex)
                 {
-                    // --- ¡¡ARREGLO!! No usamos Forbid(). ---
                     return StatusCode(500, new
                     {
                         Mensaje = "Error interno al obtener el carrito: " + ex.Message,
@@ -128,7 +127,13 @@ namespace TecnoUniShopApi.Controllers
 
                     if (carrito == null)
                     {
-                        carrito = new Carrito { IdCliente = idCliente, FechaAgregado = DateTime.Now };
+                        // --- ¡¡AQUI ESTA EL ARREGLO!! ---
+                        carrito = new Carrito
+                        {
+                            IdCliente = idCliente,
+                            FechaAgregado = DateTime.Now,
+                            ProductosCarrito = new List<ProductoCarrito>() // ¡¡Inicializar la lista!!
+                        };
                         context.Carritos.Add(carrito);
                         await context.SaveChangesAsync(); // Guardar para obtener IdCarrito
                     }
@@ -174,7 +179,6 @@ namespace TecnoUniShopApi.Controllers
                 }
                 catch (Exception ex)
                 {
-                    // --- ¡¡ARREGLO!! No usamos Forbid(). ---
                     return StatusCode(500, new
                     {
                         Mensaje = "Error interno al agregar al carrito: " + ex.Message,

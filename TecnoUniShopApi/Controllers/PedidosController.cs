@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Security.Claims;
+using System.Security.Claims; // Para leer el ID del token
 using System.Threading.Tasks;
 using TecnoUniShopApi.Data;
 using TecnoUniShopApi.DTOs;
@@ -16,7 +16,7 @@ namespace TecnoUniShopApi.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize]
+    [Authorize] // ¡¡BLOQUEADO!! Solo usuarios con token
     public class PedidosController : ControllerBase
     {
         private readonly IConfiguration _config;
@@ -27,12 +27,15 @@ namespace TecnoUniShopApi.Controllers
         }
 
         #region Helpers
+        // --- Metodo para obtener el ID del Cliente desde el Token ---
         private int GetClienteId()
         {
             var idClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
             if (idClaim == null) { throw new Exception("Token invalido - No se encontro el ID de usuario."); }
             return int.Parse(idClaim);
         }
+
+        // --- Metodo para crear el DbContext con la conexion de Cliente ---
         private ApplicationDbContext CrearContextoCliente()
         {
             var connectionString = _config.GetConnectionString("ClienteConnection");
@@ -40,6 +43,8 @@ namespace TecnoUniShopApi.Controllers
             optionsBuilder.UseSqlServer(connectionString);
             return new ApplicationDbContext(optionsBuilder.Options);
         }
+
+        // --- HELPER para la conexion del Repartidor ---
         private ApplicationDbContext CrearContextoRepartidor()
         {
             var connectionString = _config.GetConnectionString("RepartidorConnection");
@@ -77,6 +82,8 @@ namespace TecnoUniShopApi.Controllers
                         }
 
                         decimal totalPedido = 0;
+                        var itemsParaDto = new List<CarritoItemDto>();
+
                         foreach (var item in carrito.ProductosCarrito)
                         {
                             var productoEnDb = await context.Productos.FindAsync(item.IdProducto);
@@ -85,6 +92,15 @@ namespace TecnoUniShopApi.Controllers
 
                             productoEnDb.Cantidad -= item.CantidadProducto;
                             totalPedido += item.Precio * item.CantidadProducto;
+
+                            itemsParaDto.Add(new CarritoItemDto
+                            {
+                                IdProducto = item.IdProducto,
+                                NombreProducto = productoEnDb.NombreProducto,
+                                Cantidad = item.CantidadProducto,
+                                PrecioUnitario = item.Precio,
+                                SubTotal = item.Precio * item.CantidadProducto
+                            });
                         }
                         await context.SaveChangesAsync();
 
@@ -100,7 +116,6 @@ namespace TecnoUniShopApi.Controllers
                         context.Pedidos.Add(nuevoPedido);
                         await context.SaveChangesAsync();
 
-                        var itemsParaDto = new List<CarritoItemDto>();
                         foreach (var item in carrito.ProductosCarrito)
                         {
                             var detalle = new DetallePedido
@@ -110,14 +125,6 @@ namespace TecnoUniShopApi.Controllers
                                 EstadoProducto = "Sin Entregar"
                             };
                             context.DetallesPedidos.Add(detalle);
-
-                            itemsParaDto.Add(new CarritoItemDto
-                            {
-                                IdProducto = item.IdProducto,
-                                Cantidad = item.CantidadProducto,
-                                PrecioUnitario = item.Precio,
-                                SubTotal = item.Precio * item.CantidadProducto
-                            });
                         }
 
                         var nuevaFactura = new Factura
@@ -176,8 +183,7 @@ namespace TecnoUniShopApi.Controllers
         }
 
         // --- ENDPOINTS PARA REPARTIDOR ---
-
-        // GET: api/Pedidos/disponibles
+        #region Endpoints Repartidor
         [HttpGet("disponibles")]
         [Authorize(Roles = "Repartidor, Administrador")]
         public async Task<ActionResult<IEnumerable<PedidoRepartidorDto>>> GetPedidosDisponibles()
@@ -188,9 +194,6 @@ namespace TecnoUniShopApi.Controllers
                 {
                     var pedidos = await context.Pedidos
                         .Where(p => p.EstadoPedido == "En Proceso")
-                        // --- ¡¡ARREGLO!! ---
-                        // Quitamos los 'Include' y dejamos que el 'Select'
-                        // haga los JOINs de forma segura.
                         .Select(p => new PedidoRepartidorDto
                         {
                             IdPedido = p.IdPedido,
@@ -217,7 +220,6 @@ namespace TecnoUniShopApi.Controllers
             }
         }
 
-        // PUT: api/Pedidos/entregar/5
         [HttpPut("entregar/{id}")]
         [Authorize(Roles = "Repartidor, Administrador")]
         public async Task<IActionResult> MarcarComoEntregado(int id)
@@ -255,6 +257,179 @@ namespace TecnoUniShopApi.Controllers
                         Mensaje = "Error interno al marcar como entregado: " + ex.Message,
                         InnerError = ex.InnerException?.Message
                     });
+                }
+            }
+        }
+        #endregion
+
+        // --- ENDPOINT PARA CANCELAR UN PRODUCTO ---
+        [HttpPut("{idPedido}/cancelarProducto/{idProducto}")]
+        [Authorize(Roles = "Cliente, Administrador")]
+        public async Task<IActionResult> CancelarProductoDePedido(int idPedido, int idProducto)
+        {
+            using (var context = CrearContextoCliente())
+            {
+                var idCliente = GetClienteId();
+
+                using (var transaccion = await context.Database.BeginTransactionAsync())
+                {
+                    try
+                    {
+                        var pedido = await context.Pedidos.FirstOrDefaultAsync(p => p.IdPedido == idPedido && p.IdCliente == idCliente);
+                        if (pedido == null)
+                        {
+                            return NotFound(new { Mensaje = "Pedido no encontrado o no le pertenece." });
+                        }
+
+                        var detallePedido = await context.DetallesPedidos
+                            .FirstOrDefaultAsync(dp => dp.IdPedido == idPedido && dp.IdProducto == idProducto);
+
+                        if (detallePedido == null)
+                        {
+                            return NotFound(new { Mensaje = "Producto no encontrado en este pedido." });
+                        }
+
+                        if (detallePedido.EstadoProducto == "Entregado")
+                        {
+                            return BadRequest(new { Mensaje = "No se puede cancelar un producto que ya fue entregado." });
+                        }
+                        if (detallePedido.EstadoProducto == "Devuelto")
+                        {
+                            return BadRequest(new { Mensaje = "Este producto ya fue devuelto/cancelado." });
+                        }
+
+                        var factura = await context.Facturas
+                            .Include(f => f.DetallesFactura)
+                            .FirstOrDefaultAsync(f => f.IdPedido == idPedido);
+
+                        if (factura == null)
+                        {
+                            throw new Exception("Error critico: El pedido no tiene factura asociada.");
+                        }
+
+                        var detalleFactura = factura.DetallesFactura
+                            .FirstOrDefault(df => df.IdProducto == idProducto);
+
+                        if (detalleFactura == null)
+                        {
+                            throw new Exception("Error critico: El pedido no tiene este producto en la factura.");
+                        }
+
+                        var producto = await context.Productos.FindAsync(idProducto);
+                        if (producto == null)
+                        {
+                            throw new Exception($"Producto ID {idProducto} no existe en el catalogo.");
+                        }
+
+                        var cantidadDevuelta = detalleFactura.Cantidad;
+                        var subtotalDevuelto = detalleFactura.PrecioUnitario * detalleFactura.Cantidad;
+
+                        // a. Devolver el stock
+                        producto.Cantidad += cantidadDevuelta;
+
+                        // b. Restar el total del pedido
+                        pedido.TotalPedido -= subtotalDevuelto;
+
+                        // c. Restar el total de la factura
+                        factura.MontoTotal -= subtotalDevuelto;
+
+                        // d. Cambiar el estado del producto a "Devuelto"
+                        detallePedido.EstadoProducto = "Devuelto";
+
+                        await context.SaveChangesAsync();
+                        await transaccion.CommitAsync();
+
+                        return Ok(new { Mensaje = $"Producto ID {idProducto} cancelado del pedido {idPedido}." });
+                    }
+                    catch (Exception ex)
+                    {
+                        await transaccion.RollbackAsync();
+                        return StatusCode(500, new
+                        {
+                            Mensaje = "Error interno al cancelar el producto: " + ex.Message,
+                            InnerError = ex.InnerException?.Message
+                        });
+                    }
+                }
+            }
+        }
+
+        // --- ¡¡NUEVO ENDPOINT PARA CANCELAR EL PEDIDO COMPLETO!! ---
+        [HttpPut("{id}/cancelar")]
+        [Authorize(Roles = "Cliente, Administrador")]
+        public async Task<IActionResult> CancelarPedidoCompleto(int id)
+        {
+            using (var context = CrearContextoCliente())
+            {
+                var idCliente = GetClienteId();
+
+                using (var transaccion = await context.Database.BeginTransactionAsync())
+                {
+                    try
+                    {
+                        // 1. Buscar el pedido y asegurarnos que es del cliente
+                        var pedido = await context.Pedidos.FirstOrDefaultAsync(p => p.IdPedido == id && p.IdCliente == idCliente);
+                        if (pedido == null)
+                        {
+                            return NotFound(new { Mensaje = "Pedido no encontrado o no le pertenece." });
+                        }
+
+                        // 2. Revisar el estado
+                        if (pedido.EstadoPedido == "Entregado")
+                        {
+                            return BadRequest(new { Mensaje = "No se puede cancelar un pedido que ya fue entregado." });
+                        }
+                        if (pedido.EstadoPedido == "Cancelado")
+                        {
+                            return BadRequest(new { Mensaje = "Este pedido ya fue cancelado." });
+                        }
+
+                        // 3. Devolver el stock de TODOS los productos
+                        // Buscamos en la factura para saber las cantidades
+                        var factura = await context.Facturas
+                            .Include(f => f.DetallesFactura)
+                            .FirstOrDefaultAsync(f => f.IdPedido == id);
+
+                        if (factura != null && factura.DetallesFactura != null)
+                        {
+                            foreach (var detalleFactura in factura.DetallesFactura)
+                            {
+                                var producto = await context.Productos.FindAsync(detalleFactura.IdProducto);
+                                if (producto != null)
+                                {
+                                    producto.Cantidad += detalleFactura.Cantidad;
+                                }
+                            }
+                        }
+
+                        // 4. Cambiar el estado del pedido a "Cancelado"
+                        pedido.EstadoPedido = "Cancelado";
+
+                        // 5. Cambiar el estado de todos los items a "Devuelto"
+                        var detallesPedido = await context.DetallesPedidos
+                                                .Where(dp => dp.IdPedido == id)
+                                                .ToListAsync();
+
+                        foreach (var detalle in detallesPedido)
+                        {
+                            detalle.EstadoProducto = "Devuelto";
+                        }
+
+                        // 6. Guardar todo
+                        await context.SaveChangesAsync();
+                        await transaccion.CommitAsync();
+
+                        return Ok(new { Mensaje = $"Pedido ID {id} ha sido cancelado." });
+                    }
+                    catch (Exception ex)
+                    {
+                        await transaccion.RollbackAsync();
+                        return StatusCode(500, new
+                        {
+                            Mensaje = "Error interno al cancelar el pedido: " + ex.Message,
+                            InnerError = ex.InnerException?.Message
+                        });
+                    }
                 }
             }
         }
