@@ -38,8 +38,8 @@
             btnMisPedidos = new Button();
             btnOcultar = new Button();
             btnZonaRepartidor = new Button();
-            flowPanelProductos = new FlowLayoutPanel();
             btnFacturas = new Button();
+            flowPanelProductos = new FlowLayoutPanel();
             ((System.ComponentModel.ISupportInitialize)splitContainer1).BeginInit();
             splitContainer1.Panel1.SuspendLayout();
             splitContainer1.Panel2.SuspendLayout();
@@ -82,7 +82,7 @@
             // 
             // btnRefrescar
             // 
-            btnRefrescar.Location = new Point(833, 12);
+            btnRefrescar.Location = new Point(832, 12);
             btnRefrescar.Name = "btnRefrescar";
             btnRefrescar.Size = new Size(154, 34);
             btnRefrescar.TabIndex = 3;
@@ -91,7 +91,7 @@
             // 
             // btnAgregarProducto
             // 
-            btnAgregarProducto.Location = new Point(536, 11);
+            btnAgregarProducto.Location = new Point(546, 11);
             btnAgregarProducto.Name = "btnAgregarProducto";
             btnAgregarProducto.Size = new Size(215, 34);
             btnAgregarProducto.TabIndex = 2;
@@ -163,15 +163,6 @@
             btnZonaRepartidor.Visible = false;
             btnZonaRepartidor.Click += btnZonaRepartidor_Click;
             // 
-            // flowPanelProductos
-            // 
-            flowPanelProductos.AutoScroll = true;
-            flowPanelProductos.Dock = DockStyle.Fill;
-            flowPanelProductos.Location = new Point(0, 0);
-            flowPanelProductos.Name = "flowPanelProductos";
-            flowPanelProductos.Size = new Size(1443, 489);
-            flowPanelProductos.TabIndex = 0;
-            // 
             // btnFacturas
             // 
             btnFacturas.Location = new Point(858, 11);
@@ -182,6 +173,15 @@
             btnFacturas.UseVisualStyleBackColor = true;
             btnFacturas.Visible = false;
             btnFacturas.Click += btnFacturas_Click;
+            // 
+            // flowPanelProductos
+            // 
+            flowPanelProductos.AutoScroll = true;
+            flowPanelProductos.Dock = DockStyle.Fill;
+            flowPanelProductos.Location = new Point(0, 0);
+            flowPanelProductos.Name = "flowPanelProductos";
+            flowPanelProductos.Size = new Size(1443, 489);
+            flowPanelProductos.TabIndex = 0;
             // 
             // FormMenu
             // 

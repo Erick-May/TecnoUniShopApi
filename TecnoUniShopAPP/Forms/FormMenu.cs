@@ -48,6 +48,7 @@ namespace TecnoUniShopAPP.Forms
             {
                 if (btnAgregarProducto != null) btnAgregarProducto.Visible = true;
                 if (btnFacturas != null) btnFacturas.Visible = true;
+                if (btnRefrescar != null) btnRefrescar.Visible = false;
             }
             else if (_rol == "Cliente")
             {
