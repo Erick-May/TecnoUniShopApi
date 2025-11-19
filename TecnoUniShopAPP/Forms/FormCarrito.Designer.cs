@@ -106,6 +106,8 @@
             Controls.Add(btnComprar);
             Controls.Add(label1);
             Controls.Add(dgvCarrito);
+            MaximizeBox = false;
+            MinimizeBox = false;
             Name = "FormCarrito";
             Text = "FormCarrito";
             Load += FormCarrito_Load;

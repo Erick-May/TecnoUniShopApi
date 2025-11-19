@@ -120,6 +120,8 @@
             Controls.Add(btnDevolverProducto);
             Controls.Add(btnCancelarPedido);
             Controls.Add(label1);
+            MaximizeBox = false;
+            MinimizeBox = false;
             Name = "FormMisPedidos";
             Text = "FormMisPedidos";
             Load += FormMisPedidos_Load;

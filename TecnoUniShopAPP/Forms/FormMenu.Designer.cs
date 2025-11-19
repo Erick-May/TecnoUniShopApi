@@ -39,6 +39,7 @@
             btnOcultar = new Button();
             btnZonaRepartidor = new Button();
             flowPanelProductos = new FlowLayoutPanel();
+            btnFacturas = new Button();
             ((System.ComponentModel.ISupportInitialize)splitContainer1).BeginInit();
             splitContainer1.Panel1.SuspendLayout();
             splitContainer1.Panel2.SuspendLayout();
@@ -61,6 +62,7 @@
             splitContainer1.Panel1.Controls.Add(panelInicial);
             splitContainer1.Panel1.Controls.Add(btnOcultar);
             splitContainer1.Panel1.Controls.Add(btnZonaRepartidor);
+            splitContainer1.Panel1.Controls.Add(btnFacturas);
             // 
             // splitContainer1.Panel2
             // 
@@ -117,6 +119,7 @@
             btnCerrarSesion.TabIndex = 2;
             btnCerrarSesion.Text = "Cerrar Sesion";
             btnCerrarSesion.UseVisualStyleBackColor = true;
+            btnCerrarSesion.Click += btnCerrarSesion_Click_1;
             // 
             // btnVerCarrito
             // 
@@ -169,6 +172,17 @@
             flowPanelProductos.Size = new Size(1443, 489);
             flowPanelProductos.TabIndex = 0;
             // 
+            // btnFacturas
+            // 
+            btnFacturas.Location = new Point(858, 11);
+            btnFacturas.Name = "btnFacturas";
+            btnFacturas.Size = new Size(215, 34);
+            btnFacturas.TabIndex = 6;
+            btnFacturas.Text = "Ver Facturas";
+            btnFacturas.UseVisualStyleBackColor = true;
+            btnFacturas.Visible = false;
+            btnFacturas.Click += btnFacturas_Click;
+            // 
             // FormMenu
             // 
             AutoScaleDimensions = new SizeF(10F, 25F);
@@ -200,5 +214,6 @@
         private Button btnMisPedidos;
         private Button btnOcultar;
         private Button btnZonaRepartidor;
+        private Button btnFacturas;
     }
 }

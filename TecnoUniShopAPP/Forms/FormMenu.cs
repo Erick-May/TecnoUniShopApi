@@ -39,13 +39,15 @@ namespace TecnoUniShopAPP.Forms
         private void ConfigurarPermisos()
         {
             // 1. Ocultar botones sensibles por defecto
+            if (btnFacturas != null) btnFacturas.Visible = false;
             if (btnAgregarProducto != null) btnAgregarProducto.Visible = false;
-            if (btnVerCarrito != null) btnVerCarrito.Visible = false;
+            if (btnZonaRepartidor != null) btnZonaRepartidor.Visible = false;
 
             // 2. Mostrar según rol
             if (_rol == "Administrador" || _rol == "Inventarista")
             {
                 if (btnAgregarProducto != null) btnAgregarProducto.Visible = true;
+                if (btnFacturas != null) btnFacturas.Visible = true;
             }
             else if (_rol == "Cliente")
             {
@@ -55,7 +57,10 @@ namespace TecnoUniShopAPP.Forms
             {
                 if (btnZonaRepartidor != null) btnZonaRepartidor.Visible = true;
             }
-
+            else if (_rol == "Contador") // --- NUEVO ---
+            {
+                if (btnFacturas != null) btnFacturas.Visible = true;
+            }
         }
 
         private async void CargarProductos()
@@ -241,6 +246,22 @@ namespace TecnoUniShopAPP.Forms
         private void btnZonaRepartidor_Click(object sender, EventArgs e)
         {
             FormPedidosRepartidor frm = new FormPedidosRepartidor(_token);
+            frm.ShowDialog();
+        }
+
+        private void btnCerrarSesion_Click_1(object sender, EventArgs e)
+        {
+            this.Hide();
+
+            FormInicioSesion login = new FormInicioSesion();
+            login.Show();
+
+            this.Close();
+        }
+
+        private void btnFacturas_Click(object sender, EventArgs e)
+        {
+            FormFacturas frm = new FormFacturas(_token);
             frm.ShowDialog();
         }
     }

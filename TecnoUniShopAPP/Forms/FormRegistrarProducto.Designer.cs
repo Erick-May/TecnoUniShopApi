@@ -232,6 +232,8 @@
             Controls.Add(txtPrecio);
             Controls.Add(txtDescripcion);
             Controls.Add(txtNombre);
+            MaximizeBox = false;
+            MinimizeBox = false;
             Name = "FormRegistrarProducto";
             Text = "FormRegistrarProducto";
             Load += FormRegistrarProducto_Load;

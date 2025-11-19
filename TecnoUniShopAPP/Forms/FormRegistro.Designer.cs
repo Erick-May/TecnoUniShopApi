@@ -211,6 +211,8 @@
             Controls.Add(txtPassword);
             Controls.Add(txtEmail);
             Controls.Add(txtNombre);
+            MaximizeBox = false;
+            MinimizeBox = false;
             Name = "FormRegistro";
             Text = "FormRegistro";
             ResumeLayout(false);

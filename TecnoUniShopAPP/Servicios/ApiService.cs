@@ -326,5 +326,24 @@ namespace TecnoUniShopAPP.Servicios
             }
             catch (Exception ex) { return new GenericResponseDto { Exitoso = false, Mensaje = ex.Message }; }
         }
+
+        // --- METODO PARA EL CONTADOR ---
+        public async Task<List<FacturaReadDto>> GetFacturasAsync(string token)
+        {
+            client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
+            try
+            {
+                // Llamamos al endpoint del FacturasController
+                var response = await client.GetAsync($"{baseUrl}/Facturas");
+
+                if (response.IsSuccessStatusCode)
+                {
+                    var json = await response.Content.ReadAsStringAsync();
+                    return JsonConvert.DeserializeObject<List<FacturaReadDto>>(json);
+                }
+                return null;
+            }
+            catch { return null; }
+        }
     }
 }
