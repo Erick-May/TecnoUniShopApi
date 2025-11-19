@@ -433,5 +433,77 @@ namespace TecnoUniShopApi.Controllers
                 }
             }
         }
+
+        // GET: api/Pedidos/mis-pedidos
+        [HttpGet("mis-pedidos")]
+        [Authorize(Roles = "Cliente")]
+        public async Task<ActionResult<IEnumerable<PedidoReadDto>>> GetMisPedidos()
+        {
+            var idCliente = GetClienteId();
+            using (var context = CrearContextoCliente())
+            {
+                try
+                {
+                    // 1. Buscamos los pedidos del cliente
+                    var pedidos = await context.Pedidos
+                        .Where(p => p.IdCliente == idCliente)
+                        .OrderByDescending(p => p.FechaPedido) // Los mas recientes primero
+                        .ToListAsync();
+
+                    var listaPedidosDto = new List<PedidoReadDto>();
+
+                    foreach (var pedido in pedidos)
+                    {
+                        // 2. Buscamos la factura de este pedido (para sacar los items y cantidades)
+                        var factura = await context.Facturas
+                            .Include(f => f.DetallesFactura)
+                                .ThenInclude(df => df.Producto)
+                            .FirstOrDefaultAsync(f => f.IdPedido == pedido.IdPedido);
+
+                        var itemsDto = new List<CarritoItemDto>();
+                        string metodoPago = "N/A";
+                        int idFactura = 0;
+
+                        if (factura != null)
+                        {
+                            metodoPago = factura.MetodoPago;
+                            idFactura = factura.IdFactura;
+
+                            // 3. Convertimos los detalles de la factura a items para mostrar
+                            itemsDto = factura.DetallesFactura.Select(df => new CarritoItemDto
+                            {
+                                IdProducto = df.IdProducto,
+                                NombreProducto = (df.Producto != null) ? df.Producto.NombreProducto : "Producto borrado",
+                                Cantidad = df.Cantidad,
+                                PrecioUnitario = df.PrecioUnitario,
+                                SubTotal = df.Cantidad * df.PrecioUnitario,
+                                Estado = context.DetallesPedidos
+                                            .Where(dp => dp.IdPedido == pedido.IdPedido && dp.IdProducto == df.IdProducto)
+                                            .Select(dp => dp.EstadoProducto)
+                                            .FirstOrDefault() ?? "Desconocido"
+                            }).ToList();
+                        }
+
+                        // 4. Armamos el DTO del pedido
+                        listaPedidosDto.Add(new PedidoReadDto
+                        {
+                            IdPedido = pedido.IdPedido,
+                            IdFactura = idFactura,
+                            FechaPedido = pedido.FechaPedido,
+                            EstadoPedido = pedido.EstadoPedido,
+                            TotalPedido = pedido.TotalPedido,
+                            MetodoPago = metodoPago,
+                            Items = itemsDto
+                        });
+                    }
+
+                    return Ok(listaPedidosDto);
+                }
+                catch (Exception ex)
+                {
+                    return StatusCode(500, new { Mensaje = "Error al cargar historial: " + ex.Message });
+                }
+            }
+        }
     }
 }

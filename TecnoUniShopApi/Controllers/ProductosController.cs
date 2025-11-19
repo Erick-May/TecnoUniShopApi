@@ -65,7 +65,8 @@ namespace TecnoUniShopApi.Controllers
                             Precio = p.Precio,
                             Cantidad = p.Cantidad,
                             Estado = p.Estado,
-                            Categoria = (p.Categoria != null) ? p.Categoria.NombreCategoria : "N/A"
+                            Categoria = (p.Categoria != null) ? p.Categoria.NombreCategoria : "N/A",
+                            ImagenProducto = p.ImagenProducto
                         })
                         .ToListAsync();
                     return Ok(productos);

@@ -28,32 +28,34 @@ namespace TecnoUniShopAPP.Controles
             lblStock.Text = $"Stock: {stock}";
             lblCategoria.Text = categoria;
 
-            // --- AQUI ESTA EL ARREGLO DE LA IMAGEN ---
-            if (!string.IsNullOrEmpty(imagenBase64))
+            // --- CODIGO BLINDADO PARA IMAGENES ---
+            pbImagen.Image = null; // Limpiar imagen anterior
+
+            if (!string.IsNullOrEmpty(imagenBase64) && imagenBase64.Length > 100)
             {
                 try
                 {
-                    // 1. Limpiar basura vieja 
-                    if (imagenBase64.Length < 100)
-                    {
-                        pbImagen.Image = null; // Es texto basura
-                    }
-                    else
-                    {
-                        byte[] imageBytes = Convert.FromBase64String(imagenBase64);
+                    // 1. Limpiar encabezados basura (si los hubiera)
+                    string base64Limpia = imagenBase64;
+                    if (base64Limpia.Contains(",")) base64Limpia = base64Limpia.Split(',')[1];
 
-                        MemoryStream ms = new MemoryStream(imageBytes);
-                        pbImagen.Image = Image.FromStream(ms);
+                    // 2. Convertir a bytes
+                    byte[] imageBytes = Convert.FromBase64String(base64Limpia);
+
+                    // 3. Crear imagen usando "Copia Profunda" (Deep Copy) para no bloquear memoria
+                    using (MemoryStream ms = new MemoryStream(imageBytes))
+                    {
+                        using (Image imagenTemporal = Image.FromStream(ms))
+                        {
+                            pbImagen.Image = new Bitmap(imagenTemporal);
+                        }
                     }
                 }
                 catch
                 {
+                    // Si falla, no hacemos nada y se queda la imagen vacia (o pon una por defecto)
                     pbImagen.Image = null;
                 }
-            }
-            else
-            {
-                pbImagen.Image = null;
             }
 
             ConfigurarBoton(rolUsuario);

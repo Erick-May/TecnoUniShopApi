@@ -155,5 +155,176 @@ namespace TecnoUniShopAPP.Servicios
             catch (Exception ex) { return new GenericResponseDto { Exitoso = false, Mensaje = ex.Message }; }
         }
 
+        // --- NUEVO METODO PARA EL CARRITO ---
+        public async Task<GenericResponseDto> AgregarAlCarritoAsync(string token, int idProducto, int cantidad)
+        {
+            client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
+
+            var itemDto = new CarritoItemCreateDto
+            {
+                IdProducto = idProducto,
+                Cantidad = cantidad
+            };
+
+            var json = JsonConvert.SerializeObject(itemDto);
+            var content = new StringContent(json, Encoding.UTF8, "application/json");
+
+            try
+            {
+                var response = await client.PostAsync($"{baseUrl}/Carrito/agregar", content);
+
+                if (response.IsSuccessStatusCode)
+                {
+                    return new GenericResponseDto { Exitoso = true, Mensaje = "Producto agregado al carrito." };
+                }
+                else
+                {
+                    // Intentamos leer el error de la API
+                    var jsonRes = await response.Content.ReadAsStringAsync();
+                    try
+                    {
+                        var res = JsonConvert.DeserializeObject<GenericResponseDto>(jsonRes);
+                        return new GenericResponseDto { Exitoso = false, Mensaje = res.Mensaje ?? "Error al agregar." };
+                    }
+                    catch
+                    {
+                        return new GenericResponseDto { Exitoso = false, Mensaje = "Error desconocido al agregar." };
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                return new GenericResponseDto { Exitoso = false, Mensaje = ex.Message };
+            }
+        }
+
+        public async Task<CarritoReadDto> GetCarritoAsync(string token)
+        {
+            client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
+            try
+            {
+                var response = await client.GetAsync($"{baseUrl}/Carrito");
+                if (response.IsSuccessStatusCode)
+                {
+                    var json = await response.Content.ReadAsStringAsync();
+                    return JsonConvert.DeserializeObject<CarritoReadDto>(json);
+                }
+                return null;
+            }
+            catch { return null; }
+        }
+
+        // Y el metodo para COMPRAR (Crear Pedido)
+        public async Task<GenericResponseDto> CrearPedidoAsync(string token, string metodoPago)
+        {
+            client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
+
+            var pedidoDto = new { metodoPago = metodoPago }; // Objeto anonimo para el DTO simple
+            var json = JsonConvert.SerializeObject(pedidoDto);
+            var content = new StringContent(json, Encoding.UTF8, "application/json");
+
+            try
+            {
+                var response = await client.PostAsync($"{baseUrl}/Pedidos/crear", content);
+                var jsonRes = await response.Content.ReadAsStringAsync();
+
+                // La API devuelve un PedidoReadDto si es exitoso, pero aqui solo nos importa si funciono o no
+                if (response.IsSuccessStatusCode)
+                {
+                    return new GenericResponseDto { Exitoso = true, Mensaje = "¡Pedido realizado con exito!" };
+                }
+                else
+                {
+                    // Si fallo, intentamos leer el mensaje de error
+                    try
+                    {
+                        var res = JsonConvert.DeserializeObject<GenericResponseDto>(jsonRes);
+                        return new GenericResponseDto { Exitoso = false, Mensaje = res.Mensaje ?? "Error al comprar." };
+                    }
+                    catch { return new GenericResponseDto { Exitoso = false, Mensaje = "Error desconocido." }; }
+                }
+            }
+            catch (Exception ex) { return new GenericResponseDto { Exitoso = false, Mensaje = ex.Message }; }
+        }
+
+        public async Task<List<PedidoReadDto>> GetMisPedidosAsync(string token)
+        {
+            client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
+            try
+            {
+                var response = await client.GetAsync($"{baseUrl}/Pedidos/mis-pedidos");
+                if (response.IsSuccessStatusCode)
+                {
+                    var json = await response.Content.ReadAsStringAsync();
+                    return JsonConvert.DeserializeObject<List<PedidoReadDto>>(json);
+                }
+                return null;
+            }
+            catch { return null; }
+        }
+
+        // 2. Cancelar Pedido Completo
+        public async Task<GenericResponseDto> CancelarPedidoAsync(string token, int idPedido)
+        {
+            client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
+            try
+            {
+                var response = await client.PutAsync($"{baseUrl}/Pedidos/{idPedido}/cancelar", null);
+                var json = await response.Content.ReadAsStringAsync();
+                var res = JsonConvert.DeserializeObject<GenericResponseDto>(json);
+                res.Exitoso = response.IsSuccessStatusCode;
+                return res;
+            }
+            catch (Exception ex) { return new GenericResponseDto { Exitoso = false, Mensaje = ex.Message }; }
+        }
+
+        // 3. Devolver (Cancelar) un solo producto
+        public async Task<GenericResponseDto> DevolverProductoAsync(string token, int idPedido, int idProducto)
+        {
+            client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
+            try
+            {
+                var response = await client.PutAsync($"{baseUrl}/Pedidos/{idPedido}/cancelarProducto/{idProducto}", null);
+                var json = await response.Content.ReadAsStringAsync();
+                var res = JsonConvert.DeserializeObject<GenericResponseDto>(json);
+                res.Exitoso = response.IsSuccessStatusCode;
+                return res;
+            }
+            catch (Exception ex) { return new GenericResponseDto { Exitoso = false, Mensaje = ex.Message }; }
+        }
+
+        // --- METODOS PARA REPARTIDOR ---
+
+        // 1. Obtener pedidos pendientes de entrega
+        public async Task<List<PedidoRepartidorDto>> GetPedidosDisponiblesAsync(string token)
+        {
+            client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
+            try
+            {
+                var response = await client.GetAsync($"{baseUrl}/Pedidos/disponibles");
+                if (response.IsSuccessStatusCode)
+                {
+                    var json = await response.Content.ReadAsStringAsync();
+                    return JsonConvert.DeserializeObject<List<PedidoRepartidorDto>>(json);
+                }
+                return null;
+            }
+            catch { return null; }
+        }
+
+        // 2. Marcar pedido como entregado
+        public async Task<GenericResponseDto> EntregarPedidoAsync(string token, int idPedido)
+        {
+            client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
+            try
+            {
+                var response = await client.PutAsync($"{baseUrl}/Pedidos/entregar/{idPedido}", null);
+                var json = await response.Content.ReadAsStringAsync();
+                var res = JsonConvert.DeserializeObject<GenericResponseDto>(json);
+                res.Exitoso = response.IsSuccessStatusCode;
+                return res;
+            }
+            catch (Exception ex) { return new GenericResponseDto { Exitoso = false, Mensaje = ex.Message }; }
+        }
     }
 }

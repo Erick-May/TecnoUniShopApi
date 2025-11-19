@@ -111,30 +111,29 @@ namespace TecnoUniShopAPP.Forms
         {
             if (_rol == "Cliente")
             {
-                // Lógica para agregar al carrito (Próximo paso)
-                // Por ahora solo mostramos mensaje
-                MessageBox.Show($"Agregando producto ID {idProducto} al carrito...");
-
-                // Aqui llamaremos a _apiService.AgregarAlCarritoAsync(...)
+                // (Aquí va la lógica del carrito que ya teníamos)
+                AgregarAlCarrito(idProducto);
             }
             else if (_rol == "Inventarista" || _rol == "Administrador")
             {
-                MessageBox.Show($"Abriendo editor para producto ID {idProducto}...");
-            }
-            else if (_rol == "Inventarista" || _rol == "Administrador")
-            {
-                // Buscamos el objeto producto completo de la lista en memoria
+                // 1. Buscar el producto completo en nuestra lista en memoria
+                // (Usamos _listaProductos que llenamos en el Load)
                 var productoSeleccionado = _listaProductos.Find(p => p.IdProducto == idProducto);
 
                 if (productoSeleccionado != null)
                 {
-                    // Abrimos en modo EDITAR (token + producto)
+                    // 2. Abrir el formulario en modo EDITAR (pasamos token + producto)
                     FormRegistrarProducto frm = new FormRegistrarProducto(_token, productoSeleccionado);
 
+                    // 3. Si le dan a "Guardar" o "Eliminar", recargamos la lista
                     if (frm.ShowDialog() == DialogResult.OK)
                     {
-                        CargarProductos();
+                        CargarProductos(); // Refresca el catálogo para ver los cambios
                     }
+                }
+                else
+                {
+                    MessageBox.Show("No se pudo cargar la información del producto.");
                 }
             }
         }
@@ -167,6 +166,72 @@ namespace TecnoUniShopAPP.Forms
             }
         }
 
+        private async void AgregarAlCarrito(int idProducto)
+        {
+            // 1. Pedimos la cantidad al usuario
+            int cantidad = PedirCantidad();
 
+            if (cantidad > 0)
+            {
+                // 2. Llamamos a la API
+                var resp = await _apiService.AgregarAlCarritoAsync(_token, idProducto, cantidad);
+
+                if (resp.Exitoso)
+                {
+                    MessageBox.Show(resp.Mensaje, "Exito", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                }
+                else
+                {
+                    MessageBox.Show(resp.Mensaje, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+            }
+        }
+
+        // --- HELPER PARA PEDIR CANTIDAD (Crea un mini form al vuelo) ---
+        private int PedirCantidad()
+        {
+            Form formCantidad = new Form();
+            formCantidad.Size = new Size(400, 200); // Mas grande
+            formCantidad.Text = "Seleccionar Cantidad";
+            formCantidad.StartPosition = FormStartPosition.CenterParent;
+            formCantidad.FormBorderStyle = FormBorderStyle.FixedDialog;
+            formCantidad.MaximizeBox = false;
+            formCantidad.MinimizeBox = false;
+
+            Label lbl = new Label() { Left = 50, Top = 30, Text = "Cantidad a comprar:", AutoSize = true, Font = new Font("Segoe UI", 12F) };
+
+            NumericUpDown numeric = new NumericUpDown() { Left = 50, Top = 60, Width = 280, Minimum = 1, Maximum = 100, Value = 1, Font = new Font("Segoe UI", 14F) };
+
+            Button btnOk = new Button() { Text = "Agregar", Left = 200, Width = 130, Top = 110, Height = 40, DialogResult = DialogResult.OK, BackColor = Color.LightGreen };
+            Button btnCancel = new Button() { Text = "Cancelar", Left = 50, Width = 130, Top = 110, Height = 40, DialogResult = DialogResult.Cancel };
+
+            formCantidad.Controls.Add(lbl);
+            formCantidad.Controls.Add(numeric);
+            formCantidad.Controls.Add(btnOk);
+            formCantidad.Controls.Add(btnCancel);
+            formCantidad.AcceptButton = btnOk;
+            formCantidad.CancelButton = btnCancel;
+
+            if (formCantidad.ShowDialog() == DialogResult.OK)
+            {
+                return (int)numeric.Value;
+            }
+            else
+            {
+                return 0;
+            }
+        }
+
+        private void btnVerCarrito_Click(object sender, EventArgs e)
+        {
+            FormCarrito frm = new FormCarrito(_token);
+            frm.ShowDialog();
+        }
+
+        private void btnMisPedidos_Click(object sender, EventArgs e)
+        {
+            FormMisPedidos frm = new FormMisPedidos(_token);
+            frm.ShowDialog();
+        }
     }
 }

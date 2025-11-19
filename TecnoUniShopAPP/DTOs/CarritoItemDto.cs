@@ -1,6 +1,11 @@
-﻿namespace TecnoUniShopApi.DTOs
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace TecnoUniShopAPP.DTOs
 {
-    // DTO para un solo item en el carrito
     public class CarritoItemDto
     {
         public int IdProducto { get; set; }

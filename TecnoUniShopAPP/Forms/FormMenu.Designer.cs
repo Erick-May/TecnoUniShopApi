@@ -124,6 +124,7 @@
             btnVerCarrito.TabIndex = 0;
             btnVerCarrito.Text = "Carrito";
             btnVerCarrito.UseVisualStyleBackColor = true;
+            btnVerCarrito.Click += btnVerCarrito_Click;
             // 
             // btnMisPedidos
             // 
@@ -133,6 +134,7 @@
             btnMisPedidos.TabIndex = 1;
             btnMisPedidos.Text = "Mis Pedidos";
             btnMisPedidos.UseVisualStyleBackColor = true;
+            btnMisPedidos.Click += btnMisPedidos_Click;
             // 
             // btnOcultar
             // 
