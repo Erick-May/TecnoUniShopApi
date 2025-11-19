@@ -28,48 +28,49 @@
         /// </summary>
         private void InitializeComponent()
         {
-            flowPanelProductos = new FlowLayoutPanel();
-            panelMenu = new Panel();
+            splitContainer1 = new SplitContainer();
             lblUsuarioInfo = new Label();
             btnRefrescar = new Button();
             btnAgregarProducto = new Button();
-            panel = new Panel();
+            panelInicial = new Panel();
             btnCerrarSesion = new Button();
             btnVerCarrito = new Button();
             btnMisPedidos = new Button();
-            btnPanel = new Button();
-            flowPanelProductos.SuspendLayout();
-            panelMenu.SuspendLayout();
-            panel.SuspendLayout();
+            btnOcultar = new Button();
+            flowPanelProductos = new FlowLayoutPanel();
+            ((System.ComponentModel.ISupportInitialize)splitContainer1).BeginInit();
+            splitContainer1.Panel1.SuspendLayout();
+            splitContainer1.Panel2.SuspendLayout();
+            splitContainer1.SuspendLayout();
+            panelInicial.SuspendLayout();
             SuspendLayout();
             // 
-            // flowPanelProductos
+            // splitContainer1
             // 
-            flowPanelProductos.AutoScroll = true;
-            flowPanelProductos.Controls.Add(panelMenu);
-            flowPanelProductos.Dock = DockStyle.Fill;
-            flowPanelProductos.Location = new Point(0, 0);
-            flowPanelProductos.Name = "flowPanelProductos";
-            flowPanelProductos.Size = new Size(1242, 557);
-            flowPanelProductos.TabIndex = 0;
+            splitContainer1.Dock = DockStyle.Fill;
+            splitContainer1.Location = new Point(0, 0);
+            splitContainer1.Name = "splitContainer1";
+            splitContainer1.Orientation = Orientation.Horizontal;
             // 
-            // panelMenu
+            // splitContainer1.Panel1
             // 
-            panelMenu.Controls.Add(lblUsuarioInfo);
-            panelMenu.Controls.Add(btnRefrescar);
-            panelMenu.Controls.Add(btnAgregarProducto);
-            panelMenu.Controls.Add(panel);
-            panelMenu.Controls.Add(btnPanel);
-            panelMenu.Dock = DockStyle.Top;
-            panelMenu.Location = new Point(3, 3);
-            panelMenu.Name = "panelMenu";
-            panelMenu.Size = new Size(1239, 57);
-            panelMenu.TabIndex = 0;
+            splitContainer1.Panel1.Controls.Add(lblUsuarioInfo);
+            splitContainer1.Panel1.Controls.Add(btnRefrescar);
+            splitContainer1.Panel1.Controls.Add(btnAgregarProducto);
+            splitContainer1.Panel1.Controls.Add(panelInicial);
+            splitContainer1.Panel1.Controls.Add(btnOcultar);
+            // 
+            // splitContainer1.Panel2
+            // 
+            splitContainer1.Panel2.Controls.Add(flowPanelProductos);
+            splitContainer1.Size = new Size(1242, 557);
+            splitContainer1.SplitterDistance = 64;
+            splitContainer1.TabIndex = 0;
             // 
             // lblUsuarioInfo
             // 
             lblUsuarioInfo.AutoSize = true;
-            lblUsuarioInfo.Location = new Point(924, 16);
+            lblUsuarioInfo.Location = new Point(936, 20);
             lblUsuarioInfo.Name = "lblUsuarioInfo";
             lblUsuarioInfo.Size = new Size(109, 25);
             lblUsuarioInfo.TabIndex = 4;
@@ -77,7 +78,7 @@
             // 
             // btnRefrescar
             // 
-            btnRefrescar.Location = new Point(761, 11);
+            btnRefrescar.Location = new Point(777, 15);
             btnRefrescar.Name = "btnRefrescar";
             btnRefrescar.Size = new Size(141, 34);
             btnRefrescar.TabIndex = 3;
@@ -86,22 +87,25 @@
             // 
             // btnAgregarProducto
             // 
-            btnAgregarProducto.Location = new Point(530, 11);
+            btnAgregarProducto.Location = new Point(542, 15);
             btnAgregarProducto.Name = "btnAgregarProducto";
             btnAgregarProducto.Size = new Size(215, 34);
             btnAgregarProducto.TabIndex = 2;
             btnAgregarProducto.Text = "Agregar Producto";
             btnAgregarProducto.UseVisualStyleBackColor = true;
+            btnAgregarProducto.Click += btnAgregarProducto_Click;
             // 
-            // panel
+            // panelInicial
             // 
-            panel.Controls.Add(btnCerrarSesion);
-            panel.Controls.Add(btnVerCarrito);
-            panel.Controls.Add(btnMisPedidos);
-            panel.Location = new Point(67, 0);
-            panel.Name = "panel";
-            panel.Size = new Size(457, 57);
-            panel.TabIndex = 1;
+            panelInicial.Controls.Add(btnCerrarSesion);
+            panelInicial.Controls.Add(btnVerCarrito);
+            panelInicial.Controls.Add(btnMisPedidos);
+            panelInicial.Dock = DockStyle.Left;
+            panelInicial.Location = new Point(73, 0);
+            panelInicial.Name = "panelInicial";
+            panelInicial.Size = new Size(457, 64);
+            panelInicial.TabIndex = 2;
+            panelInicial.Visible = false;
             // 
             // btnCerrarSesion
             // 
@@ -111,7 +115,6 @@
             btnCerrarSesion.TabIndex = 2;
             btnCerrarSesion.Text = "Cerrar Sesion";
             btnCerrarSesion.UseVisualStyleBackColor = true;
-            btnCerrarSesion.Click += btnCerrarSesion_Click;
             // 
             // btnVerCarrito
             // 
@@ -131,44 +134,55 @@
             btnMisPedidos.Text = "Mis Pedidos";
             btnMisPedidos.UseVisualStyleBackColor = true;
             // 
-            // btnPanel
+            // btnOcultar
             // 
-            btnPanel.Dock = DockStyle.Left;
-            btnPanel.Location = new Point(0, 0);
-            btnPanel.Name = "btnPanel";
-            btnPanel.Size = new Size(70, 57);
-            btnPanel.TabIndex = 0;
-            btnPanel.Text = ".";
-            btnPanel.UseVisualStyleBackColor = true;
-            btnPanel.Click += btnPanel_Click;
+            btnOcultar.Dock = DockStyle.Left;
+            btnOcultar.Location = new Point(0, 0);
+            btnOcultar.Name = "btnOcultar";
+            btnOcultar.Size = new Size(73, 64);
+            btnOcultar.TabIndex = 0;
+            btnOcultar.Text = ".";
+            btnOcultar.UseVisualStyleBackColor = true;
+            btnOcultar.Click += btnOcultar_Click;
+            // 
+            // flowPanelProductos
+            // 
+            flowPanelProductos.AutoScroll = true;
+            flowPanelProductos.Dock = DockStyle.Fill;
+            flowPanelProductos.Location = new Point(0, 0);
+            flowPanelProductos.Name = "flowPanelProductos";
+            flowPanelProductos.Size = new Size(1242, 489);
+            flowPanelProductos.TabIndex = 0;
             // 
             // FormMenu
             // 
             AutoScaleDimensions = new SizeF(10F, 25F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(1242, 557);
-            Controls.Add(flowPanelProductos);
+            Controls.Add(splitContainer1);
             Name = "FormMenu";
             Text = "FormMenu";
             Load += FormMenu_Load;
-            flowPanelProductos.ResumeLayout(false);
-            panelMenu.ResumeLayout(false);
-            panelMenu.PerformLayout();
-            panel.ResumeLayout(false);
+            splitContainer1.Panel1.ResumeLayout(false);
+            splitContainer1.Panel1.PerformLayout();
+            splitContainer1.Panel2.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)splitContainer1).EndInit();
+            splitContainer1.ResumeLayout(false);
+            panelInicial.ResumeLayout(false);
             ResumeLayout(false);
         }
 
         #endregion
 
-        private FlowLayoutPanel flowPanelProductos;
-        private Panel panelMenu;
-        private Button btnPanel;
-        private Panel panel;
-        private Button btnVerCarrito;
+        private SplitContainer splitContainer1;
+        private Label lblUsuarioInfo;
         private Button btnRefrescar;
         private Button btnAgregarProducto;
+        private FlowLayoutPanel flowPanelProductos;
+        private Panel panelInicial;
         private Button btnCerrarSesion;
+        private Button btnVerCarrito;
         private Button btnMisPedidos;
-        private Label lblUsuarioInfo;
+        private Button btnOcultar;
     }
 }

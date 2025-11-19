@@ -33,6 +33,7 @@ namespace TecnoUniShopAPP.Forms
 
             // Desactivamos el boton para que no le den clic 1000 veces
             btnIniciarSesion.Enabled = false;
+            btnRegistrarse.Enabled = false;
 
             try
             {
@@ -51,9 +52,9 @@ namespace TecnoUniShopAPP.Forms
                     // Ocultamos el login
                     this.Hide();
 
-                    // Abrimos el FormPrincipal (que aun no hemos creado)
-                    // FormPrincipal formPrincipal = new FormPrincipal(token, rol);
-                    // formPrincipal.ShowDialog();
+                    // Abrimos el FormMenu
+                    FormMenu formMenu = new FormMenu(token, rol);
+                    formMenu.ShowDialog();
 
                     // Cuando se cierre el FormPrincipal, cerramos este tambien
                     this.Close();
@@ -72,6 +73,7 @@ namespace TecnoUniShopAPP.Forms
 
             // Volvemos a activar el boton
             btnIniciarSesion.Enabled = true;
+            btnRegistrarse.Enabled = true;  
         }
 
         private void btnRegistrarse_Click(object sender, EventArgs e)

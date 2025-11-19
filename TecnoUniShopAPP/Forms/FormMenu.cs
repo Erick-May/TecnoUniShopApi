@@ -27,6 +27,8 @@ namespace TecnoUniShopAPP.Forms
 
             ConfigurarPermisos();
             lblUsuarioInfo.Text = $"Rol: {_rol}";
+
+            ConfigurarPermisos();
         }
 
         private void FormMenu_Load(object sender, EventArgs e)
@@ -36,57 +38,71 @@ namespace TecnoUniShopAPP.Forms
 
         private void ConfigurarPermisos()
         {
-            // Ocultar todo primero
-            btnAgregarProducto.Visible = false;
-            btnVerCarrito.Visible = false;
-            // btnMisPedidos.Visible = false;
+            // 1. Ocultar botones sensibles por defecto
+            if (btnAgregarProducto != null) btnAgregarProducto.Visible = false;
+            if (btnVerCarrito != null) btnVerCarrito.Visible = false;
 
+            // 2. Mostrar según rol
             if (_rol == "Administrador" || _rol == "Inventarista")
             {
-                btnAgregarProducto.Visible = true;
+                if (btnAgregarProducto != null) btnAgregarProducto.Visible = true;
             }
             else if (_rol == "Cliente")
             {
-                btnVerCarrito.Visible = true;
-                // btnMisPedidos.Visible = true;
+                if (btnVerCarrito != null) btnVerCarrito.Visible = true;
             }
-            // Repartidor y Contador ven el catalogo pero sin botones especiales aqui
+            // Repartidor y Contador solo ven el catálogo
         }
 
         private async void CargarProductos()
         {
-            flowPanelProductos.Controls.Clear(); // Limpiar lo viejo
+            // Mostrar cursor de carga (opcional)
+            this.Cursor = Cursors.WaitCursor;
+            flowPanelProductos.Controls.Clear(); // Limpiar panel
 
             try
             {
-                // Llamada a la API (Necesitas agregar este metodo a tu ApiService)
-                // _apiService.ObtenerProductosAsync(_token);
-                // Por ahora simulare que recibimos la lista, luego actualizamos ApiService
+                // 1. Llamar a la API
+                _listaProductos = await _apiService.GetProductosAsync(_token);
 
-                // --- TODO: Descomentar esto cuando actualicemos ApiService ---
-                // _listaProductos = await _apiService.GetProductosAsync(_token);
-
-                if (_listaProductos != null)
+                if (_listaProductos != null && _listaProductos.Count > 0)
                 {
+                    // 2. Crear una tarjeta por cada producto
                     foreach (var prod in _listaProductos)
                     {
-                        // Crear una tarjeta por cada producto
                         var tarjeta = new ProductoControl();
 
-                        // Llenar los datos (asegurate que tu DTO tenga estos campos)
-                        // tarjeta.SetData(prod.IdProducto, prod.NombreProducto, prod.Precio, prod.Cantidad, prod.Categoria, prod.ImagenProducto, _rol);
+                        // Llenar datos de la tarjeta
+                        tarjeta.SetData(
+                            prod.IdProducto,
+                            prod.NombreProducto,
+                            prod.Descripcion ?? "Sin descripción", // Manejar nulos
+                            prod.Precio,
+                            prod.Cantidad,
+                            prod.Categoria,
+                            prod.ImagenProducto,
+                            _rol // Pasamos el rol para que la tarjeta sepa qué botón mostrar
+                        );
 
-                        // Suscribirse al click del boton de la tarjeta
+                        // Suscribir al evento del botón de la tarjeta
                         tarjeta.OnBtnAccionClick += Tarjeta_OnBtnAccionClick;
 
-                        // Agregar al panel magico
+                        // Agregar al panel con scroll
                         flowPanelProductos.Controls.Add(tarjeta);
                     }
+                }
+                else
+                {
+                    MessageBox.Show("No se encontraron productos o hubo un error al cargar.");
                 }
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Error al cargar productos: " + ex.Message);
+                MessageBox.Show("Error: " + ex.Message);
+            }
+            finally
+            {
+                this.Cursor = Cursors.Default;
             }
         }
 
@@ -95,28 +111,62 @@ namespace TecnoUniShopAPP.Forms
         {
             if (_rol == "Cliente")
             {
-                // Logica para agregar al carrito
-                // AgregarAlCarrito(idProducto, 1);
-                MessageBox.Show($"Agregando producto {idProducto} al carrito...", "Cargando");
+                // Lógica para agregar al carrito (Próximo paso)
+                // Por ahora solo mostramos mensaje
+                MessageBox.Show($"Agregando producto ID {idProducto} al carrito...");
+
+                // Aqui llamaremos a _apiService.AgregarAlCarritoAsync(...)
             }
             else if (_rol == "Inventarista" || _rol == "Administrador")
             {
-                // Logica para editar
-                MessageBox.Show($"Abriendo editor para producto {idProducto}...");
-                // FormEditarProducto frm = new FormEditarProducto(idProducto, _token);
-                // frm.ShowDialog();
-                // CargarProductos(); // Recargar al volver
+                MessageBox.Show($"Abriendo editor para producto ID {idProducto}...");
+            }
+            else if (_rol == "Inventarista" || _rol == "Administrador")
+            {
+                // Buscamos el objeto producto completo de la lista en memoria
+                var productoSeleccionado = _listaProductos.Find(p => p.IdProducto == idProducto);
+
+                if (productoSeleccionado != null)
+                {
+                    // Abrimos en modo EDITAR (token + producto)
+                    FormRegistrarProducto frm = new FormRegistrarProducto(_token, productoSeleccionado);
+
+                    if (frm.ShowDialog() == DialogResult.OK)
+                    {
+                        CargarProductos();
+                    }
+                }
             }
         }
 
         private void btnCerrarSesion_Click(object sender, EventArgs e)
         {
             this.Close();
+
         }
 
-        private void btnPanel_Click(object sender, EventArgs e)
+        private void btnRefrescar_Click(object sender, EventArgs e)
         {
-            panel.Visible = !panel.Visible;
+            CargarProductos();
         }
+
+        private void btnOcultar_Click(object sender, EventArgs e)
+        {
+            panelInicial.Visible = !panelInicial.Visible;
+        }
+
+        private void btnAgregarProducto_Click(object sender, EventArgs e)
+        {
+            // Abrimos en modo CREAR (solo token)
+            FormRegistrarProducto frm = new FormRegistrarProducto(_token);
+
+            // Si devuelve OK, es que guardo algo, asi que recargamos la lista
+            if (frm.ShowDialog() == DialogResult.OK)
+            {
+                CargarProductos();
+            }
+        }
+
+
     }
 }

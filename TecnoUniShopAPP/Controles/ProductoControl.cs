@@ -23,22 +23,26 @@ namespace TecnoUniShopAPP.Controles
         {
             IdProducto = id;
             lblNombre.Text = nombre;
-
-            // --- NUEVO ---
             lblDescripcion.Text = descripcion;
-
             lblPrecio.Text = $"$ {precio:N2}";
             lblStock.Text = $"Stock: {stock}";
             lblCategoria.Text = categoria;
 
-            // Convertir imagen base64 a imagen real
+            // --- AQUI ESTA EL ARREGLO DE LA IMAGEN ---
             if (!string.IsNullOrEmpty(imagenBase64))
             {
                 try
                 {
-                    byte[] imageBytes = Convert.FromBase64String(imagenBase64);
-                    using (var ms = new MemoryStream(imageBytes))
+                    // 1. Limpiar basura vieja 
+                    if (imagenBase64.Length < 100)
                     {
+                        pbImagen.Image = null; // Es texto basura
+                    }
+                    else
+                    {
+                        byte[] imageBytes = Convert.FromBase64String(imagenBase64);
+
+                        MemoryStream ms = new MemoryStream(imageBytes);
                         pbImagen.Image = Image.FromStream(ms);
                     }
                 }
@@ -46,6 +50,10 @@ namespace TecnoUniShopAPP.Controles
                 {
                     pbImagen.Image = null;
                 }
+            }
+            else
+            {
+                pbImagen.Image = null;
             }
 
             ConfigurarBoton(rolUsuario);
