@@ -68,7 +68,7 @@
             // 
             // btnVolver
             // 
-            btnVolver.Location = new Point(239, 505);
+            btnVolver.Location = new Point(257, 505);
             btnVolver.Name = "btnVolver";
             btnVolver.Size = new Size(189, 54);
             btnVolver.TabIndex = 15;

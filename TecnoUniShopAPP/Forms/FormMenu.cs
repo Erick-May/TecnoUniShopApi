@@ -51,7 +51,11 @@ namespace TecnoUniShopAPP.Forms
             {
                 if (btnVerCarrito != null) btnVerCarrito.Visible = true;
             }
-            // Repartidor y Contador solo ven el catálogo
+            else if (_rol == "Repartidor")
+            {
+                if (btnZonaRepartidor != null) btnZonaRepartidor.Visible = true;
+            }
+
         }
 
         private async void CargarProductos()
@@ -231,6 +235,12 @@ namespace TecnoUniShopAPP.Forms
         private void btnMisPedidos_Click(object sender, EventArgs e)
         {
             FormMisPedidos frm = new FormMisPedidos(_token);
+            frm.ShowDialog();
+        }
+
+        private void btnZonaRepartidor_Click(object sender, EventArgs e)
+        {
+            FormPedidosRepartidor frm = new FormPedidosRepartidor(_token);
             frm.ShowDialog();
         }
     }
