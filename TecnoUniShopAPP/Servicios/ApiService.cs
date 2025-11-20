@@ -345,5 +345,40 @@ namespace TecnoUniShopAPP.Servicios
             }
             catch { return null; }
         }
+
+        public async Task<List<ReporteVentasDto>> GetReporteVentasAsync(string token)
+        {
+            client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
+            try
+            {
+                var response = await client.GetAsync($"{baseUrl}/Facturas/reporte-ventas");
+                if (response.IsSuccessStatusCode)
+                {
+                    var json = await response.Content.ReadAsStringAsync();
+                    return JsonConvert.DeserializeObject<List<ReporteVentasDto>>(json);
+                }
+                return new List<ReporteVentasDto>();
+            }
+            catch { return new List<ReporteVentasDto>(); }
+        }
+
+        public async Task<List<ReporteVentasDto>> GetReporteRangoAsync(string token, DateTime inicio, DateTime fin)
+        {
+            client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
+            // Formato de fecha seguro para URL
+            string url = $"{baseUrl}/Facturas/reporte-rango?inicio={inicio:yyyy-MM-dd}&fin={fin:yyyy-MM-dd}";
+
+            try
+            {
+                var response = await client.GetAsync(url);
+                if (response.IsSuccessStatusCode)
+                {
+                    var json = await response.Content.ReadAsStringAsync();
+                    return JsonConvert.DeserializeObject<List<ReporteVentasDto>>(json);
+                }
+                return new List<ReporteVentasDto>();
+            }
+            catch { return new List<ReporteVentasDto>(); }
+        }
     }
 }

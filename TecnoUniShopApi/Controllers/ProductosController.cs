@@ -145,10 +145,18 @@ namespace TecnoUniShopApi.Controllers
                     {
                         var empleadoId = GetEmpleadoId();
 
+                        // 1. Buscamos el producto (EF Core lo empieza a rastrear AQUI)
                         var productoEnDb = await context.Productos.FindAsync(id);
-                        if (productoEnDb == null) { return NotFound(new { Mensaje = "Producto no encontrado." }); }
 
-                        // Copiamos TODOS los campos del DTO
+                        if (productoEnDb == null)
+                        {
+                            return NotFound(new { Mensaje = "Producto no encontrado." });
+                        }
+
+                        // 2. --- ¡EL ARREGLO! ---
+                        // NO uses context.Update(productoDto) ni context.Entry(...).State = Modified
+                        // En su lugar, COPIA los valores nuevos al objeto que YA ESTA en memoria:
+
                         productoEnDb.NombreProducto = productoDto.NombreProducto;
                         productoEnDb.Descripcion = productoDto.Descripcion;
                         productoEnDb.Precio = productoDto.Precio;
@@ -157,7 +165,7 @@ namespace TecnoUniShopApi.Controllers
                         productoEnDb.ImagenProducto = productoDto.ImagenProducto;
                         productoEnDb.Estado = productoDto.Estado;
 
-                        // (Logica de la bitacora)
+                        // (Logica de la bitacora - Igual que antes)
                         var logExistente = await context.DetalleRegistros
                             .FirstOrDefaultAsync(l => l.IdAdmin == empleadoId && l.IdProducto == id);
 
@@ -176,6 +184,8 @@ namespace TecnoUniShopApi.Controllers
                             logExistente.FechaRegistro = DateTime.Now;
                         }
 
+                        // 3. Guardamos
+                        // EF Core ve que 'productoEnDb' cambió y genera el SQL solo.
                         await context.SaveChangesAsync();
                         await transaccion.CommitAsync();
 

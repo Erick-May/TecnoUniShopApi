@@ -76,5 +76,89 @@ namespace TecnoUniShopApi.Controllers
                 }
             }
         }
+
+        // GET: api/Facturas/reporte-ventas
+        [HttpGet("reporte-ventas")]
+        public async Task<ActionResult<IEnumerable<ReporteVentasDto>>> GetReporteVentas()
+        {
+            using (var context = CrearContextoContador())
+            {
+                try
+                {
+                    // Llamada al SP usando SQL Raw
+                    // Nota: EF Core requiere una clase 'Keyless' para esto, 
+                    // pero para hacerlo rapido haremos una proyeccion manual o usamos un truco.
+
+                    // TRUCO RAPIDO: Usar Database.GetDbConnection
+                    var lista = new List<ReporteVentasDto>();
+                    var conn = context.Database.GetDbConnection();
+                    await conn.OpenAsync();
+
+                    using (var command = conn.CreateCommand())
+                    {
+                        command.CommandText = "EXEC sp_ReporteProductosMasVendidos";
+                        using (var reader = await command.ExecuteReaderAsync())
+                        {
+                            while (await reader.ReadAsync())
+                            {
+                                lista.Add(new ReporteVentasDto
+                                {
+                                    Producto = reader.GetString(0),
+                                    TotalVendido = reader.GetInt32(1)
+                                });
+                            }
+                        }
+                    }
+                    return Ok(lista);
+                }
+                catch (Exception ex)
+                {
+                    return StatusCode(500, new { Mensaje = "Error en reporte: " + ex.Message });
+                }
+            }
+        }
+
+        // GET: api/Facturas/reporte-rango?inicio=2025-01-01&fin=2025-12-31
+        [HttpGet("reporte-rango")]
+        public async Task<ActionResult<IEnumerable<ReporteVentasDto>>> GetReporteRango(DateTime inicio, DateTime fin)
+        {
+            using (var context = CrearContextoContador())
+            {
+                try
+                {
+                    var lista = new List<ReporteVentasDto>();
+                    var conn = context.Database.GetDbConnection();
+                    await conn.OpenAsync();
+
+                    using (var command = conn.CreateCommand())
+                    {
+                        // Pasamos las fechas formateadas
+                        string fechaIni = inicio.ToString("yyyy-MM-dd");
+                        string fechaFin = fin.ToString("yyyy-MM-dd");
+
+                        command.CommandText = $"EXEC sp_ReporteVentasPorFecha '{fechaIni}', '{fechaFin}'";
+
+                        using (var reader = await command.ExecuteReaderAsync())
+                        {
+                            while (await reader.ReadAsync())
+                            {
+                                lista.Add(new ReporteVentasDto
+                                {
+                                    Producto = reader.GetString(0),
+                                    Categoria = reader.GetString(1),
+                                    UnidadesVendidas = reader.GetInt32(2),
+                                    TotalIngresos = reader.GetDecimal(3)
+                                });
+                            }
+                        }
+                    }
+                    return Ok(lista);
+                }
+                catch (Exception ex)
+                {
+                    return StatusCode(500, new { Mensaje = "Error en reporte: " + ex.Message });
+                }
+            }
+        }
     }
 }

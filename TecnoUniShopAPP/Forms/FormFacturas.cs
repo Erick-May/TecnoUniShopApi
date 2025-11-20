@@ -71,5 +71,11 @@ namespace TecnoUniShopAPP.Forms
         {
             this.Close();
         }
+
+        private void btnReportes_Click(object sender, EventArgs e)
+        {
+            FormReportes reportes = new FormReportes(_token);
+            reportes.ShowDialog();
+        }
     }
 }
