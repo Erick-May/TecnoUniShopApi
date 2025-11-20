@@ -206,6 +206,7 @@
             // btnCrearCuenta
             // 
             btnCrearCuenta.BackColor = Color.MidnightBlue;
+            btnCrearCuenta.Cursor = Cursors.Hand;
             btnCrearCuenta.FlatAppearance.MouseOverBackColor = Color.FromArgb(0, 192, 0);
             btnCrearCuenta.FlatStyle = FlatStyle.Flat;
             btnCrearCuenta.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
@@ -222,6 +223,7 @@
             // btnCancelar
             // 
             btnCancelar.BackColor = Color.MidnightBlue;
+            btnCancelar.Cursor = Cursors.Hand;
             btnCancelar.FlatAppearance.MouseOverBackColor = Color.Red;
             btnCancelar.FlatStyle = FlatStyle.Flat;
             btnCancelar.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
