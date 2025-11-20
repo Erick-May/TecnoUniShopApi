@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormRegistrarProducto));
             txtNombre = new TextBox();
             txtDescripcion = new TextBox();
             txtPrecio = new TextBox();
@@ -51,169 +52,224 @@
             // 
             // txtNombre
             // 
-            txtNombre.Location = new Point(491, 76);
+            txtNombre.BackColor = SystemColors.InactiveCaption;
+            txtNombre.Location = new Point(456, 75);
+            txtNombre.Margin = new Padding(2, 2, 2, 2);
             txtNombre.Name = "txtNombre";
-            txtNombre.Size = new Size(353, 31);
+            txtNombre.Size = new Size(283, 27);
             txtNombre.TabIndex = 0;
             // 
             // txtDescripcion
             // 
-            txtDescripcion.Location = new Point(491, 133);
+            txtDescripcion.BackColor = SystemColors.InactiveCaption;
+            txtDescripcion.Location = new Point(456, 123);
+            txtDescripcion.Margin = new Padding(2, 2, 2, 2);
             txtDescripcion.Multiline = true;
             txtDescripcion.Name = "txtDescripcion";
-            txtDescripcion.Size = new Size(353, 82);
+            txtDescripcion.Size = new Size(283, 66);
             txtDescripcion.TabIndex = 1;
             // 
             // txtPrecio
             // 
-            txtPrecio.Location = new Point(491, 285);
+            txtPrecio.BackColor = SystemColors.InactiveCaption;
+            txtPrecio.Location = new Point(456, 255);
+            txtPrecio.Margin = new Padding(2, 2, 2, 2);
             txtPrecio.Name = "txtPrecio";
-            txtPrecio.Size = new Size(353, 31);
+            txtPrecio.Size = new Size(283, 27);
             txtPrecio.TabIndex = 2;
             // 
             // txtStock
             // 
-            txtStock.Location = new Point(491, 344);
+            txtStock.BackColor = SystemColors.InactiveCaption;
+            txtStock.Location = new Point(456, 308);
+            txtStock.Margin = new Padding(2, 2, 2, 2);
             txtStock.Name = "txtStock";
-            txtStock.Size = new Size(353, 31);
+            txtStock.Size = new Size(283, 27);
             txtStock.TabIndex = 3;
             // 
             // cmbCategoria
             // 
+            cmbCategoria.BackColor = SystemColors.InactiveBorder;
             cmbCategoria.DropDownStyle = ComboBoxStyle.DropDownList;
             cmbCategoria.FormattingEnabled = true;
-            cmbCategoria.Location = new Point(491, 231);
+            cmbCategoria.Location = new Point(456, 204);
+            cmbCategoria.Margin = new Padding(2, 2, 2, 2);
             cmbCategoria.Name = "cmbCategoria";
-            cmbCategoria.Size = new Size(353, 33);
+            cmbCategoria.Size = new Size(283, 28);
             cmbCategoria.TabIndex = 4;
             // 
             // cmbEstado
             // 
             cmbEstado.DropDownStyle = ComboBoxStyle.DropDownList;
             cmbEstado.FormattingEnabled = true;
-            cmbEstado.Location = new Point(491, 407);
+            cmbEstado.Location = new Point(456, 362);
+            cmbEstado.Margin = new Padding(2, 2, 2, 2);
             cmbEstado.Name = "cmbEstado";
-            cmbEstado.Size = new Size(353, 33);
+            cmbEstado.Size = new Size(283, 28);
             cmbEstado.TabIndex = 5;
             // 
             // pbImagen
             // 
-            pbImagen.Location = new Point(12, 76);
+            pbImagen.BackColor = SystemColors.ActiveCaption;
+            pbImagen.Location = new Point(11, 75);
+            pbImagen.Margin = new Padding(2, 2, 2, 2);
             pbImagen.Name = "pbImagen";
-            pbImagen.Size = new Size(231, 267);
+            pbImagen.Size = new Size(212, 246);
             pbImagen.SizeMode = PictureBoxSizeMode.StretchImage;
             pbImagen.TabIndex = 6;
             pbImagen.TabStop = false;
             // 
             // btnSeleccionarImagen
             // 
-            btnSeleccionarImagen.Location = new Point(12, 400);
+            btnSeleccionarImagen.BackColor = Color.MidnightBlue;
+            btnSeleccionarImagen.Cursor = Cursors.Hand;
+            btnSeleccionarImagen.FlatAppearance.MouseOverBackColor = Color.FromArgb(192, 192, 255);
+            btnSeleccionarImagen.FlatStyle = FlatStyle.Flat;
+            btnSeleccionarImagen.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            btnSeleccionarImagen.ForeColor = SystemColors.ControlLightLight;
+            btnSeleccionarImagen.Location = new Point(25, 342);
+            btnSeleccionarImagen.Margin = new Padding(2, 2, 2, 2);
             btnSeleccionarImagen.Name = "btnSeleccionarImagen";
-            btnSeleccionarImagen.Size = new Size(231, 40);
+            btnSeleccionarImagen.Size = new Size(177, 48);
             btnSeleccionarImagen.TabIndex = 7;
             btnSeleccionarImagen.Text = "Seleccionar Imagen";
-            btnSeleccionarImagen.UseVisualStyleBackColor = true;
+            btnSeleccionarImagen.UseVisualStyleBackColor = false;
             btnSeleccionarImagen.Click += btnSeleccionarImagen_Click;
             // 
             // btnEliminar
             // 
-            btnEliminar.Location = new Point(14, 493);
+            btnEliminar.BackColor = Color.MidnightBlue;
+            btnEliminar.Cursor = Cursors.Hand;
+            btnEliminar.FlatAppearance.MouseOverBackColor = Color.Red;
+            btnEliminar.FlatStyle = FlatStyle.Flat;
+            btnEliminar.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            btnEliminar.ForeColor = SystemColors.ControlLightLight;
+            btnEliminar.Location = new Point(25, 429);
+            btnEliminar.Margin = new Padding(2, 2, 2, 2);
             btnEliminar.Name = "btnEliminar";
-            btnEliminar.Size = new Size(229, 43);
+            btnEliminar.Size = new Size(177, 60);
             btnEliminar.TabIndex = 8;
             btnEliminar.Text = "Desactivar";
-            btnEliminar.UseVisualStyleBackColor = true;
+            btnEliminar.UseVisualStyleBackColor = false;
             btnEliminar.Click += btnEliminar_Click;
             // 
             // btnGuardar
             // 
-            btnGuardar.Location = new Point(317, 493);
+            btnGuardar.BackColor = Color.MidnightBlue;
+            btnGuardar.Cursor = Cursors.Hand;
+            btnGuardar.FlatAppearance.MouseOverBackColor = Color.FromArgb(0, 192, 0);
+            btnGuardar.FlatStyle = FlatStyle.Flat;
+            btnGuardar.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            btnGuardar.ForeColor = SystemColors.ControlLightLight;
+            btnGuardar.Location = new Point(302, 429);
+            btnGuardar.Margin = new Padding(2, 2, 2, 2);
             btnGuardar.Name = "btnGuardar";
-            btnGuardar.Size = new Size(229, 43);
+            btnGuardar.Size = new Size(177, 60);
             btnGuardar.TabIndex = 9;
             btnGuardar.Text = "Guardar";
-            btnGuardar.UseVisualStyleBackColor = true;
+            btnGuardar.UseVisualStyleBackColor = false;
             btnGuardar.Click += btnGuardar_Click;
             // 
             // btnCancelar
             // 
-            btnCancelar.Location = new Point(615, 493);
+            btnCancelar.BackColor = Color.MidnightBlue;
+            btnCancelar.Cursor = Cursors.Hand;
+            btnCancelar.FlatAppearance.MouseOverBackColor = Color.Red;
+            btnCancelar.FlatStyle = FlatStyle.Flat;
+            btnCancelar.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            btnCancelar.ForeColor = SystemColors.ControlLightLight;
+            btnCancelar.Location = new Point(569, 429);
+            btnCancelar.Margin = new Padding(2, 2, 2, 2);
             btnCancelar.Name = "btnCancelar";
-            btnCancelar.Size = new Size(229, 43);
+            btnCancelar.Size = new Size(170, 60);
             btnCancelar.TabIndex = 10;
             btnCancelar.Text = "Cancelar";
-            btnCancelar.UseVisualStyleBackColor = true;
+            btnCancelar.UseVisualStyleBackColor = false;
             btnCancelar.Click += btnCancelar_Click;
             // 
             // label1
             // 
             label1.AutoSize = true;
-            label1.Font = new Font("Sitka Text", 16F, FontStyle.Bold | FontStyle.Italic, GraphicsUnit.Point, 0);
-            label1.Location = new Point(139, 9);
+            label1.Font = new Font("Segoe UI", 18F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            label1.Location = new Point(94, 9);
+            label1.Margin = new Padding(2, 0, 2, 0);
             label1.Name = "label1";
-            label1.Size = new Size(627, 47);
+            label1.Size = new Size(570, 41);
             label1.TabIndex = 11;
             label1.Text = "AGREGAR O ACTUALIZAR PRODUCTOS";
             // 
             // label2
             // 
             label2.AutoSize = true;
-            label2.Location = new Point(289, 83);
+            label2.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            label2.Location = new Point(250, 74);
+            label2.Margin = new Padding(2, 0, 2, 0);
             label2.Name = "label2";
-            label2.Size = new Size(146, 25);
+            label2.Size = new Size(181, 28);
             label2.TabIndex = 12;
-            label2.Text = "Nmbre producto";
+            label2.Text = "Nombre producto :";
             // 
             // label3
             // 
             label3.AutoSize = true;
-            label3.Location = new Point(289, 136);
+            label3.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            label3.Location = new Point(274, 136);
+            label3.Margin = new Padding(2, 0, 2, 0);
             label3.Name = "label3";
-            label3.Size = new Size(104, 25);
+            label3.Size = new Size(123, 28);
             label3.TabIndex = 13;
-            label3.Text = "Descripcion";
+            label3.Text = "Descripción :";
             // 
             // label4
             // 
             label4.AutoSize = true;
-            label4.Location = new Point(289, 285);
+            label4.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            label4.Location = new Point(290, 254);
+            label4.Margin = new Padding(2, 0, 2, 0);
             label4.Name = "label4";
-            label4.Size = new Size(60, 25);
+            label4.Size = new Size(75, 28);
             label4.TabIndex = 14;
-            label4.Text = "Precio";
+            label4.Text = "Precio :";
             // 
             // label5
             // 
             label5.AutoSize = true;
-            label5.Location = new Point(289, 344);
+            label5.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            label5.Location = new Point(289, 307);
+            label5.Margin = new Padding(2, 0, 2, 0);
             label5.Name = "label5";
-            label5.Size = new Size(83, 25);
+            label5.Size = new Size(100, 28);
             label5.TabIndex = 15;
-            label5.Text = "Cantidad";
+            label5.Text = "Cantidad :";
             // 
             // label6
             // 
             label6.AutoSize = true;
-            label6.Location = new Point(284, 231);
+            label6.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            label6.Location = new Point(274, 200);
+            label6.Margin = new Padding(2, 0, 2, 0);
             label6.Name = "label6";
-            label6.Size = new Size(88, 25);
+            label6.Size = new Size(106, 28);
             label6.TabIndex = 16;
-            label6.Text = "Categoria";
+            label6.Text = "Categoria :";
             // 
             // label7
             // 
             label7.AutoSize = true;
-            label7.Location = new Point(289, 408);
+            label7.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            label7.Location = new Point(250, 362);
+            label7.Margin = new Padding(2, 0, 2, 0);
             label7.Name = "label7";
-            label7.Size = new Size(144, 25);
+            label7.Size = new Size(166, 28);
             label7.TabIndex = 17;
-            label7.Text = "Estado Producto";
+            label7.Text = "Estado Producto :";
             // 
             // FormRegistrarProducto
             // 
-            AutoScaleDimensions = new SizeF(10F, 25F);
+            AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(909, 548);
+            BackColor = SystemColors.ControlLightLight;
+            ClientSize = new Size(770, 513);
             Controls.Add(label7);
             Controls.Add(label6);
             Controls.Add(label5);
@@ -232,10 +288,13 @@
             Controls.Add(txtPrecio);
             Controls.Add(txtDescripcion);
             Controls.Add(txtNombre);
+            Icon = (Icon)resources.GetObject("$this.Icon");
+            Margin = new Padding(2, 2, 2, 2);
             MaximizeBox = false;
             MinimizeBox = false;
             Name = "FormRegistrarProducto";
-            Text = "FormRegistrarProducto";
+            StartPosition = FormStartPosition.CenterScreen;
+            Text = "Registrar Producto";
             Load += FormRegistrarProducto_Load;
             ((System.ComponentModel.ISupportInitialize)pbImagen).EndInit();
             ResumeLayout(false);
