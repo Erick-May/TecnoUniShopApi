@@ -86,21 +86,23 @@ namespace TecnoUniShopApi.Controllers
                 try
                 {
                     var lista = new List<ReporteVentasDto>();
-                    // Usamos Database.GetDbConnection para ejecutar SQL crudo
                     var conn = context.Database.GetDbConnection();
                     await conn.OpenAsync();
 
                     using (var command = conn.CreateCommand())
                     {
-                        command.CommandText = "EXEC sp_ReporteProductosMasVendidos";
+                        command.CommandText = "EXEC sp_ReporteProductosMasVendidos"; // Este ahora devuelve 'UnidadesVendidas'
                         using (var reader = await command.ExecuteReaderAsync())
                         {
                             while (await reader.ReadAsync())
                             {
                                 lista.Add(new ReporteVentasDto
                                 {
-                                    Producto = reader.GetString(0), // Columna 1 del SP
-                                    UnidadesVendidas = reader.GetInt32(1) // Columna 2 del SP
+                                    // Columna 0: Nombre del Producto
+                                    Producto = reader.GetString(0),
+
+                                    // Columna 1: Cantidad (Ahora SQL la llama UnidadesVendidas)
+                                    UnidadesVendidas = reader.GetInt32(1)
                                 });
                             }
                         }
@@ -109,12 +111,12 @@ namespace TecnoUniShopApi.Controllers
                 }
                 catch (Exception ex)
                 {
-                    return StatusCode(500, new { Mensaje = "Error en reporte: " + ex.Message });
+                    return StatusCode(500, new { Mensaje = "Error: " + ex.Message });
                 }
             }
         }
 
-        // GET: api/Facturas/reporte-rango?inicio=2025-01-01&fin=2025-12-31
+        // GET: api/Facturas/reporte-rango
         [HttpGet("reporte-rango")]
         public async Task<ActionResult<IEnumerable<ReporteVentasDto>>> GetReporteRango(DateTime inicio, DateTime fin)
         {
@@ -128,10 +130,8 @@ namespace TecnoUniShopApi.Controllers
 
                     using (var command = conn.CreateCommand())
                     {
-                        // Pasamos las fechas formateadas
                         string fechaIni = inicio.ToString("yyyy-MM-dd");
                         string fechaFin = fin.ToString("yyyy-MM-dd");
-
                         command.CommandText = $"EXEC sp_ReporteVentasPorFecha '{fechaIni}', '{fechaFin}'";
 
                         using (var reader = await command.ExecuteReaderAsync())
@@ -142,7 +142,10 @@ namespace TecnoUniShopApi.Controllers
                                 {
                                     Producto = reader.GetString(0),
                                     Categoria = reader.GetString(1),
+
+                                    // Aquí el SP ya lo llama UnidadesVendidas (columna 2)
                                     UnidadesVendidas = reader.GetInt32(2),
+
                                     TotalIngresos = reader.GetDecimal(3)
                                 });
                             }
@@ -152,7 +155,7 @@ namespace TecnoUniShopApi.Controllers
                 }
                 catch (Exception ex)
                 {
-                    return StatusCode(500, new { Mensaje = "Error en reporte: " + ex.Message });
+                    return StatusCode(500, new { Mensaje = "Error en reporte rango: " + ex.Message });
                 }
             }
         }

@@ -39,6 +39,8 @@
             btnFiltrar = new Button();
             dgvReporte = new DataGridView();
             btnExportarExcel = new Button();
+            label3 = new Label();
+            btnVolver = new Button();
             ((System.ComponentModel.ISupportInitialize)chartVentas).BeginInit();
             ((System.ComponentModel.ISupportInitialize)dgvReporte).BeginInit();
             SuspendLayout();
@@ -121,11 +123,34 @@
             btnExportarExcel.UseVisualStyleBackColor = true;
             btnExportarExcel.Click += btnExportarExcel_Click;
             // 
+            // label3
+            // 
+            label3.AutoSize = true;
+            label3.Font = new Font("Segoe UI", 22.2F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            label3.Location = new Point(470, 9);
+            label3.Margin = new Padding(2, 0, 2, 0);
+            label3.Name = "label3";
+            label3.Size = new Size(539, 61);
+            label3.TabIndex = 14;
+            label3.Text = "REPORTE DE MEJORES 5";
+            // 
+            // btnVolver
+            // 
+            btnVolver.Location = new Point(1086, 183);
+            btnVolver.Name = "btnVolver";
+            btnVolver.Size = new Size(188, 49);
+            btnVolver.TabIndex = 15;
+            btnVolver.Text = "Volver";
+            btnVolver.UseVisualStyleBackColor = true;
+            btnVolver.Click += btnVolver_Click;
+            // 
             // FormReportes
             // 
             AutoScaleDimensions = new SizeF(10F, 25F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(1519, 729);
+            Controls.Add(btnVolver);
+            Controls.Add(label3);
             Controls.Add(btnExportarExcel);
             Controls.Add(dgvReporte);
             Controls.Add(btnFiltrar);
@@ -153,5 +178,7 @@
         private Button btnFiltrar;
         private DataGridView dgvReporte;
         private Button btnExportarExcel;
+        private Label label3;
+        private Button btnVolver;
     }
 }
