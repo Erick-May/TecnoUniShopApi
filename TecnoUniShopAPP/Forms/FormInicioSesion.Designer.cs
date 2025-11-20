@@ -45,6 +45,7 @@
             // btnIniciarSesion
             // 
             btnIniciarSesion.BackColor = Color.MidnightBlue;
+            btnIniciarSesion.Cursor = Cursors.Hand;
             btnIniciarSesion.FlatAppearance.MouseOverBackColor = Color.Silver;
             btnIniciarSesion.FlatStyle = FlatStyle.Flat;
             btnIniciarSesion.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
@@ -61,6 +62,7 @@
             // btnRegistrarse
             // 
             btnRegistrarse.BackColor = Color.MidnightBlue;
+            btnRegistrarse.Cursor = Cursors.Hand;
             btnRegistrarse.FlatAppearance.MouseOverBackColor = Color.FromArgb(0, 192, 0);
             btnRegistrarse.FlatStyle = FlatStyle.Flat;
             btnRegistrarse.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
@@ -139,9 +141,9 @@
             // pictureBox1
             // 
             pictureBox1.Image = (Image)resources.GetObject("pictureBox1.Image");
-            pictureBox1.Location = new Point(-7, 56);
+            pictureBox1.Location = new Point(0, 56);
             pictureBox1.Name = "pictureBox1";
-            pictureBox1.Size = new Size(470, 463);
+            pictureBox1.Size = new Size(466, 455);
             pictureBox1.SizeMode = PictureBoxSizeMode.Zoom;
             pictureBox1.TabIndex = 8;
             pictureBox1.TabStop = false;
