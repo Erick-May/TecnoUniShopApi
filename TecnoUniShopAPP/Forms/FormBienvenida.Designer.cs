@@ -47,7 +47,7 @@
             btnEntrar.Font = new Font("Segoe UI Semibold", 16.2F, FontStyle.Bold, GraphicsUnit.Point, 0);
             btnEntrar.ForeColor = SystemColors.ControlLightLight;
             btnEntrar.Location = new Point(634, 388);
-            btnEntrar.Margin = new Padding(2, 2, 2, 2);
+            btnEntrar.Margin = new Padding(2);
             btnEntrar.Name = "btnEntrar";
             btnEntrar.Size = new Size(172, 54);
             btnEntrar.TabIndex = 0;
@@ -70,7 +70,7 @@
             // 
             label2.AutoSize = true;
             label2.Font = new Font("Segoe UI", 25.8000011F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            label2.Location = new Point(526, 114);
+            label2.Location = new Point(528, 124);
             label2.Margin = new Padding(2, 0, 2, 0);
             label2.Name = "label2";
             label2.Size = new Size(393, 60);
@@ -102,14 +102,15 @@
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
             BackColor = SystemColors.ControlLightLight;
-            ClientSize = new Size(986, 580);
+            ClientSize = new Size(980, 580);
             Controls.Add(panel1);
             Controls.Add(label2);
             Controls.Add(label1);
             Controls.Add(btnEntrar);
             Icon = (Icon)resources.GetObject("$this.Icon");
-            Margin = new Padding(2, 2, 2, 2);
+            Margin = new Padding(2);
             Name = "FormBienvenida";
+            StartPosition = FormStartPosition.CenterScreen;
             Text = "TECNO UNI SHOP";
             panel1.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)pictureBox1).EndInit();

@@ -73,7 +73,7 @@ namespace TecnoUniShopAPP.Forms
 
             // Volvemos a activar el boton
             btnIniciarSesion.Enabled = true;
-            btnRegistrarse.Enabled = true;  
+            btnRegistrarse.Enabled = true;
         }
 
         private void btnRegistrarse_Click(object sender, EventArgs e)
