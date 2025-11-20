@@ -25,7 +25,7 @@ namespace TecnoUniShopAPP.Controles
             lblNombre.Text = nombre;
             lblDescripcion.Text = descripcion;
             lblPrecio.Text = $"$ {precio:N2}";
-            lblStock.Text = $"Stock: {stock}";
+            lblStock.Text = $"Cantidad: {stock}";
             lblCategoria.Text = categoria;
 
             // --- CODIGO BLINDADO PARA IMAGENES ---
@@ -66,7 +66,7 @@ namespace TecnoUniShopAPP.Controles
             switch (rol)
             {
                 case "Cliente":
-                    btnAccion.Text = "Agregar al Carrito";
+                    btnAccion.Text = "Agregar";
                     btnAccion.Visible = true;
                     break;
                 case "Inventarista":
@@ -85,5 +85,6 @@ namespace TecnoUniShopAPP.Controles
         {
             OnBtnAccionClick?.Invoke(this, IdProducto);
         }
+
     }
 }

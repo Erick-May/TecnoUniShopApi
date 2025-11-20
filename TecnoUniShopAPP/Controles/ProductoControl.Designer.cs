@@ -32,9 +32,9 @@
             lblNombre = new Label();
             lblPrecio = new Label();
             lblCategoria = new Label();
-            lblStock = new Label();
             btnAccion = new Button();
             lblDescripcion = new Label();
+            lblStock = new Label();
             ((System.ComponentModel.ISupportInitialize)pbImagen).BeginInit();
             SuspendLayout();
             // 
@@ -50,41 +50,36 @@
             // lblNombre
             // 
             lblNombre.AutoSize = true;
-            lblNombre.Location = new Point(44, 296);
+            lblNombre.Font = new Font("Sitka Small", 11F, FontStyle.Bold | FontStyle.Italic | FontStyle.Underline, GraphicsUnit.Point, 0);
+            lblNombre.Location = new Point(12, 296);
             lblNombre.Name = "lblNombre";
-            lblNombre.Size = new Size(156, 25);
+            lblNombre.Size = new Size(217, 33);
             lblNombre.TabIndex = 1;
             lblNombre.Text = "Nombre Producto";
             // 
             // lblPrecio
             // 
             lblPrecio.AutoSize = true;
+            lblPrecio.Font = new Font("Sitka Small", 10F, FontStyle.Bold | FontStyle.Italic, GraphicsUnit.Point, 0);
             lblPrecio.Location = new Point(294, 34);
             lblPrecio.Name = "lblPrecio";
-            lblPrecio.Size = new Size(60, 25);
+            lblPrecio.Size = new Size(79, 29);
             lblPrecio.TabIndex = 2;
             lblPrecio.Text = "Precio";
             // 
             // lblCategoria
             // 
             lblCategoria.AutoSize = true;
-            lblCategoria.Location = new Point(294, 90);
+            lblCategoria.Font = new Font("Sitka Small", 10F, FontStyle.Bold | FontStyle.Italic, GraphicsUnit.Point, 0);
+            lblCategoria.Location = new Point(290, 90);
             lblCategoria.Name = "lblCategoria";
-            lblCategoria.Size = new Size(88, 25);
+            lblCategoria.Size = new Size(113, 29);
             lblCategoria.TabIndex = 3;
             lblCategoria.Text = "Categoria";
             // 
-            // lblStock
-            // 
-            lblStock.AutoSize = true;
-            lblStock.Location = new Point(295, 154);
-            lblStock.Name = "lblStock";
-            lblStock.Size = new Size(83, 25);
-            lblStock.TabIndex = 4;
-            lblStock.Text = "Cantidad";
-            // 
             // btnAccion
             // 
+            btnAccion.Font = new Font("Sitka Heading", 11F, FontStyle.Bold | FontStyle.Italic, GraphicsUnit.Point, 0);
             btnAccion.Location = new Point(416, 296);
             btnAccion.Name = "btnAccion";
             btnAccion.Size = new Size(181, 51);
@@ -97,19 +92,30 @@
             // 
             lblDescripcion.AutoEllipsis = true;
             lblDescripcion.AutoSize = true;
-            lblDescripcion.Location = new Point(301, 196);
+            lblDescripcion.Font = new Font("Sitka Heading", 10F, FontStyle.Bold | FontStyle.Italic, GraphicsUnit.Point, 0);
+            lblDescripcion.Location = new Point(294, 196);
             lblDescripcion.Name = "lblDescripcion";
-            lblDescripcion.Size = new Size(104, 25);
+            lblDescripcion.Size = new Size(113, 29);
             lblDescripcion.TabIndex = 6;
             lblDescripcion.Text = "Descripcion";
+            // 
+            // lblStock
+            // 
+            lblStock.AutoSize = true;
+            lblStock.Font = new Font("Sitka Small", 10F, FontStyle.Bold | FontStyle.Italic, GraphicsUnit.Point, 0);
+            lblStock.Location = new Point(290, 147);
+            lblStock.Name = "lblStock";
+            lblStock.Size = new Size(106, 29);
+            lblStock.TabIndex = 7;
+            lblStock.Text = "Cantidad";
             // 
             // ProductoControl
             // 
             AutoScaleDimensions = new SizeF(10F, 25F);
             AutoScaleMode = AutoScaleMode.Font;
+            Controls.Add(lblStock);
             Controls.Add(lblDescripcion);
             Controls.Add(btnAccion);
-            Controls.Add(lblStock);
             Controls.Add(lblCategoria);
             Controls.Add(lblPrecio);
             Controls.Add(lblNombre);
@@ -127,8 +133,8 @@
         private Label lblNombre;
         private Label lblPrecio;
         private Label lblCategoria;
-        private Label lblStock;
         private Button btnAccion;
         private Label lblDescripcion;
+        private Label lblStock;
     }
 }
