@@ -85,12 +85,8 @@ namespace TecnoUniShopApi.Controllers
             {
                 try
                 {
-                    // Llamada al SP usando SQL Raw
-                    // Nota: EF Core requiere una clase 'Keyless' para esto, 
-                    // pero para hacerlo rapido haremos una proyeccion manual o usamos un truco.
-
-                    // TRUCO RAPIDO: Usar Database.GetDbConnection
                     var lista = new List<ReporteVentasDto>();
+                    // Usamos Database.GetDbConnection para ejecutar SQL crudo
                     var conn = context.Database.GetDbConnection();
                     await conn.OpenAsync();
 
@@ -103,8 +99,8 @@ namespace TecnoUniShopApi.Controllers
                             {
                                 lista.Add(new ReporteVentasDto
                                 {
-                                    Producto = reader.GetString(0),
-                                    TotalVendido = reader.GetInt32(1)
+                                    Producto = reader.GetString(0), // Columna 1 del SP
+                                    UnidadesVendidas = reader.GetInt32(1) // Columna 2 del SP
                                 });
                             }
                         }
