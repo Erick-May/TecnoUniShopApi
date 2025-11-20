@@ -68,7 +68,7 @@
             btnRegistrarse.Location = new Point(755, 440);
             btnRegistrarse.Margin = new Padding(2, 2, 2, 2);
             btnRegistrarse.Name = "btnRegistrarse";
-            btnRegistrarse.Size = new Size(166, 60);
+            btnRegistrarse.Size = new Size(177, 60);
             btnRegistrarse.TabIndex = 1;
             btnRegistrarse.Text = "Registrarse";
             btnRegistrarse.UseVisualStyleBackColor = false;
