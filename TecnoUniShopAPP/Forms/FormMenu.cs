@@ -26,7 +26,7 @@ namespace TecnoUniShopAPP.Forms
             _apiService = new ApiService();
 
             ConfigurarPermisos();
-            lblUsuarioInfo.Text = $"Rol: {_rol}";
+            lblUsuarioInfo.Text = $"{_rol}";
 
             ConfigurarPermisos();
         }
@@ -49,6 +49,7 @@ namespace TecnoUniShopAPP.Forms
                 if (btnAgregarProducto != null) btnAgregarProducto.Visible = true;
                 if (btnFacturas != null) btnFacturas.Visible = true;
                 if (btnRefrescar != null) btnRefrescar.Visible = false;
+                if (btnZonaRepartidor != null) btnZonaRepartidor.Visible = true;
             }
             else if (_rol == "Cliente")
             {
@@ -246,7 +247,7 @@ namespace TecnoUniShopAPP.Forms
 
         private void btnZonaRepartidor_Click(object sender, EventArgs e)
         {
-            FormPedidosRepartidor frm = new FormPedidosRepartidor(_token);
+            FormPedidosRepartidor frm = new FormPedidosRepartidor(_token, _rol);
             frm.ShowDialog();
         }
 

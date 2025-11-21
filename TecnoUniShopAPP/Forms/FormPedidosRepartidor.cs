@@ -10,12 +10,16 @@ namespace TecnoUniShopAPP.Forms
     {
         private readonly string _token;
         private readonly ApiService _apiService;
+        private readonly string _rol;
 
-        public FormPedidosRepartidor(string token)
+        public FormPedidosRepartidor(string token, string rol)
         {
             InitializeComponent();
             _token = token;
             _apiService = new ApiService();
+            _rol = rol;
+
+            if (rol == "Administrador") btnEntregar.Visible = false;
         }
 
         private void FormPedidosRepartidor_Load(object sender, EventArgs e)
@@ -41,7 +45,7 @@ namespace TecnoUniShopAPP.Forms
         {
             if (dgvPedidos.CurrentRow == null)
             {
-                MessageBox.Show("Selecciona un pedido para entregar.");
+                MessageBox.Show("Selecciona un pedido para entregar.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }
 
